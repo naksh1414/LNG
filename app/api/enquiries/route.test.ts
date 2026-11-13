@@ -1,8 +1,10 @@
 // @vitest-environment node
 import { MongoMemoryServer } from 'mongodb-memory-server'
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import { getDb } from '@/lib/db/mongo'
 import { createBook } from '@/lib/books/repo'
+import * as repo from '@/lib/enquiries/repo'
+import * as limiter from '@/lib/rate-limit'
 import { listEnquiries } from '@/lib/enquiries/repo'
 import { POST } from './route'
 
@@ -24,6 +26,8 @@ beforeEach(async () => {
   await db.collection('enquiries').deleteMany({})
   await db.collection('rate_limits').deleteMany({})
 }, 120000)
+
+afterEach(() => vi.restoreAllMocks())
 
 const valid = { name: 'Asha', contact: 'a@b.in', message: 'Hello' }
 const post = (body: unknown, ip = '1.2.3.4') =>
@@ -79,5 +83,27 @@ describe('POST /api/enquiries', () => {
     for (let i = 0; i < 5; i++) expect((await post(valid, '9.9.9.9')).status).toBe(201)
     expect((await post(valid, '9.9.9.9')).status).toBe(429)
     expect((await post(valid, '8.8.8.8')).status).toBe(201)
+  })
+
+  it('invalid bodies and honeypot hits do not consume the rate limit', async () => {
+    for (let i = 0; i < 6; i++) await post({ ...valid, name: '' }, '7.7.7.7')
+    for (let i = 0; i < 6; i++) await post({ ...valid, website: 'x' }, '7.7.7.7')
+    for (let i = 0; i < 5; i++) expect((await post(valid, '7.7.7.7')).status).toBe(201)
+    expect((await post(valid, '7.7.7.7')).status).toBe(429)
+  })
+
+  it('still saves when the rate limiter throws', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    vi.spyOn(limiter, 'hit').mockRejectedValue(new Error('db down'))
+    expect((await post(valid)).status).toBe(201)
+    expect(await listEnquiries()).toHaveLength(1)
+  })
+
+  it('returns a clean 500 when saving throws', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    vi.spyOn(repo, 'createEnquiry').mockRejectedValue(new Error('secret internals'))
+    const res = await post(valid)
+    expect(res.status).toBe(500)
+    expect(await res.json()).toEqual({ error: 'Could not save your enquiry' })
   })
 })

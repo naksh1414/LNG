@@ -32,7 +32,7 @@ export async function createEnquiry(input: {
   bookTitle?: string
 }): Promise<Enquiry> {
   const doc: EnquiryDoc = { ...input, read: false, createdAt: new Date() }
-  const { insertedId } = await (await enquiries()).insertOne(doc as never)
+  const { insertedId } = await (await enquiries()).insertOne(doc)
   return toEnquiry({ ...doc, _id: insertedId })
 }
 
