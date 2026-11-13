@@ -1,3 +1,4 @@
+// MONGODB_URI and MONGODB_DB must be exported in the shell: tsx does not load .env.local.
 import { getDb } from '../lib/db/mongo'
 import { createBook } from '../lib/books/repo'
 import { seedBooks } from '../lib/books/seed-data'

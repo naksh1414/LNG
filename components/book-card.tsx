@@ -10,7 +10,7 @@ export function BookCard({ book, index }: { book: Book; index: number }) {
         href={`/books/${book.slug}`}
         className="group block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
       >
-        <BookCover book={book} index={index} />
+        <BookCover book={book} index={index} decorative />
         <span className="mt-4 block text-xs font-semibold tracking-wide text-muted-foreground uppercase">
           {book.subject} &middot; {ageLabel(book.ageMin, book.ageMax)}
         </span>

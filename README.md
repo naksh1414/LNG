@@ -19,5 +19,5 @@ See `.env.example`: `MONGODB_URI`, `MONGODB_DB`, `SESSION_SECRET`, `ADMIN_EMAIL`
 - `pnpm test` run Vitest
 - `pnpm typecheck` run `tsc --noEmit`
 - `pnpm build` production build
-- `pnpm seed` load the starting catalogue into MongoDB
+- `pnpm seed` load the starting catalogue into MongoDB (export `MONGODB_URI` and `MONGODB_DB` first; tsx does not read `.env.local`)
 - `pnpm seed-admin` create the admin user from `ADMIN_EMAIL` / `ADMIN_PASSWORD`

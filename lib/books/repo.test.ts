@@ -39,6 +39,7 @@ beforeAll(async () => {
 }, 120000)
 
 afterAll(async () => {
+  await (await getDb()).client.close()
   await server.stop()
 })
 
@@ -75,8 +76,12 @@ describe('book repository', () => {
       }
       return real.apply(this, args)
     })
-    const book = await createBook(base)
-    spy.mockRestore()
+    let book
+    try {
+      book = await createBook(base)
+    } finally {
+      spy.mockRestore()
+    }
     expect(book.slug).toBe('the-quiet-observer-2')
     expect(await col.countDocuments({})).toBe(2)
   })
@@ -103,10 +108,12 @@ describe('book repository', () => {
 
   it('updateBook changes fields and bumps updatedAt', async () => {
     const book = await createBook(base)
+    await new Promise((r) => setTimeout(r, 10))
     const next = await updateBook(book.id, { ...base, title: 'Renamed', slug: book.slug })
     expect(next?.title).toBe('Renamed')
     expect(next?.slug).toBe(book.slug)
     expect(next?.createdAt).toBe(book.createdAt)
+    expect(new Date(next!.updatedAt).getTime()).toBeGreaterThan(new Date(book.updatedAt).getTime())
   })
 
   it('deleteBook removes the book', async () => {
@@ -123,5 +130,14 @@ describe('book repository', () => {
     await createBook({ ...base, title: 'C', subject: 'Nature' })
     await createBook({ ...base, title: 'D', subject: 'Secret', published: false })
     expect(await listSubjects()).toEqual(['Language', 'Nature'])
+  })
+
+  it('two module imports share one Mongo client', async () => {
+    vi.resetModules()
+    const a = await import('@/lib/db/mongo')
+    vi.resetModules()
+    const b = await import('@/lib/db/mongo')
+    expect(a).not.toBe(b)
+    expect((await a.getDb()).client).toBe((await b.getDb()).client)
   })
 })

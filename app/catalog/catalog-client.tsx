@@ -15,11 +15,13 @@ export function CatalogClient({ books, subjects }: { books: Book[]; subjects: st
   const [subject, setSubject] = useState(ALL)
   const [query, setQuery] = useState('')
   const q = query.trim().toLowerCase()
-  const shown = books.filter(
-    (b) =>
+  const shown = books
+    .map((book, index) => ({ book, index }))
+    .filter(
+    ({ book: b }) =>
       (subject === ALL || b.subject === subject) &&
       (!q || `${b.title} ${b.author} ${b.subject}`.toLowerCase().includes(q)),
-  )
+    )
   const clear = () => {
     setSubject(ALL)
     setQuery('')
@@ -60,15 +62,14 @@ export function CatalogClient({ books, subjects }: { books: Book[]; subjects: st
       </p>
       {shown.length ? (
         <ul className="mt-6 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
-          {shown.map((book) => (
+          {shown.map(({ book, index }) => (
             <motion.li
               key={book.id}
               layout={!reduce}
-              initial={reduce ? false : { opacity: 0 }}
-              animate={{ opacity: 1 }}
+              initial={false}
               transition={{ duration: 0.25 }}
             >
-              <BookCard book={book} index={books.indexOf(book)} />
+              <BookCard book={book} index={index} />
             </motion.li>
           ))}
         </ul>

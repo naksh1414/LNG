@@ -1,18 +1,18 @@
 import { MongoClient, type Db } from 'mongodb'
 
-let clientPromise: Promise<MongoClient> | undefined
-let indexesPromise: Promise<void> | undefined
+// On globalThis so Next dev hot reload reuses one client instead of leaking connections.
+const g = globalThis as typeof globalThis & { _lngMongo?: Promise<MongoClient>; _lngIndexes?: Promise<void> }
 
 async function connect(): Promise<Db> {
   const uri = process.env.MONGODB_URI
   if (!uri) throw new Error('MONGODB_URI is not set')
   const name = process.env.MONGODB_DB
   if (!name) throw new Error('MONGODB_DB is not set')
-  clientPromise ??= MongoClient.connect(uri).catch((e) => {
-    clientPromise = undefined
+  g._lngMongo ??= MongoClient.connect(uri).catch((e) => {
+    g._lngMongo = undefined
     throw e
   })
-  return (await clientPromise).db(name)
+  return (await g._lngMongo).db(name)
 }
 
 export async function ensureIndexes(): Promise<void> {
@@ -25,10 +25,10 @@ export async function ensureIndexes(): Promise<void> {
 // Indexes are created lazily, once per process.
 export async function getDb(): Promise<Db> {
   const db = await connect()
-  indexesPromise ??= ensureIndexes().catch((e) => {
-    indexesPromise = undefined
+  g._lngIndexes ??= ensureIndexes().catch((e) => {
+    g._lngIndexes = undefined
     throw e
   })
-  await indexesPromise
+  await g._lngIndexes
   return db
 }
