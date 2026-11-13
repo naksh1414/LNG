@@ -1,14 +1,12 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import { cache } from 'react'
 import { notFound } from 'next/navigation'
 import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
 import { BookCover } from '@/components/book-cover'
-import { buttonVariants } from '@/components/ui/button'
+import { EnquireButton } from '@/components/enquire-button'
 import { ageLabel } from '@/lib/books/format'
 import { getPublishedBookBySlug as fetchBook } from '@/lib/books/repo'
-import { cn } from '@/lib/utils'
 
 // Needs a live database, so it renders per request; the build must not require MONGODB_URI.
 export const dynamic = 'force-dynamic'
@@ -65,10 +63,7 @@ export default async function BookPage({ params }: Props) {
               ),
             )}
           </dl>
-          {/* TASK 5 PLACEHOLDER: replace this link with the enquiry action. */}
-          <Link href="/#contact" className={cn(buttonVariants(), 'mt-8')}>
-            Enquire about this book
-          </Link>
+          <EnquireButton book={{ id: book.id, title: book.title }} />
         </div>
       </main>
       <SiteFooter />

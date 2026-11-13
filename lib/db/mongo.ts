@@ -20,6 +20,10 @@ export async function ensureIndexes(): Promise<void> {
   await books.createIndex({ slug: 1 }, { unique: true })
   await books.createIndex({ published: 1 })
   await books.createIndex({ subject: 1 })
+  const db = await connect()
+  await db.collection('rate_limits').createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 })
+  await db.collection('rate_limits').createIndex({ key: 1, windowStart: 1 }, { unique: true })
+  await db.collection('enquiries').createIndex({ createdAt: -1, read: 1 })
 }
 
 // Indexes are created lazily, once per process.
