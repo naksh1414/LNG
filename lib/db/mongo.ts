@@ -23,6 +23,8 @@ export async function ensureIndexes(): Promise<void> {
   const db = await connect()
   await db.collection('rate_limits').createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 })
   await db.collection('rate_limits').createIndex({ key: 1, windowStart: 1 }, { unique: true })
+  // 13 months at 30 days each.
+  await db.collection('events').createIndex({ createdAt: 1 }, { expireAfterSeconds: 13 * 30 * 24 * 60 * 60 })
   await db.collection('enquiries').createIndex({ createdAt: -1, read: 1 })
 }
 

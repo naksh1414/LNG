@@ -1,6 +1,7 @@
 import { Analytics } from '@vercel/analytics/next'
 import { Figtree } from 'next/font/google'
 import type { Metadata, Viewport } from 'next'
+import { AnalyticsTracker } from '@/components/analytics-tracker'
 import './globals.css'
 
 const font = Figtree({ subsets: ['latin'], variable: '--font-figtree', display: 'swap' })
@@ -30,6 +31,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${font.variable} antialiased`}>
         {children}
+        <AnalyticsTracker />
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

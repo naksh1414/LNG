@@ -5,6 +5,7 @@ import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { sendEvent } from '@/components/analytics-tracker'
 import { LIMITS } from '@/lib/enquiries/limits'
 import { buildWhatsAppUrl } from '@/lib/enquiries/whatsapp'
 import { site } from '@/lib/site'
@@ -67,6 +68,7 @@ export function EnquiryForm({ book }: Props) {
       saved = false
     }
     setSending(false)
+    if (saved) sendEvent({ type: 'enquiry_sent', bookId: book?.id })
 
     if (win && whatsapp) {
       try {

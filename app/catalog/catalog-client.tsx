@@ -5,6 +5,7 @@ import { motion, useReducedMotion } from 'motion/react'
 import { BookCard } from '@/components/book-card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { trackSearch } from '@/components/analytics-tracker'
 import type { Book } from '@/lib/books/types'
 import { cn } from '@/lib/utils'
 
@@ -53,7 +54,10 @@ export function CatalogClient({ books, subjects }: { books: Book[]; subjects: st
           aria-label="Search books"
           placeholder="Find a book"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(e) => {
+            setQuery(e.target.value)
+            trackSearch(e.target.value)
+          }}
           className="md:max-w-xs"
         />
       </div>
