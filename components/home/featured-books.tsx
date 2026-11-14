@@ -31,13 +31,8 @@ export function FeaturedBooks({ books }: { books: Book[] }) {
               href={`/books/${lead.slug}`}
               className="group block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
             >
-              <span className="block overflow-hidden">
-                <BookCover
-                  book={lead}
-                  index={0}
-                  decorative
-                  className="transition-transform duration-500 group-hover:scale-[1.02] motion-reduce:transition-none"
-                />
+              <span className="block w-[82%] shadow-[0_30px_50px_-30px_rgba(35,44,54,0.6)] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-y-2 motion-reduce:transition-none motion-reduce:group-hover:translate-y-0 sm:w-[70%] lg:w-full">
+                <BookCover book={lead} index={0} decorative />
               </span>
               <span className="mt-6 block text-sm font-semibold text-muted-foreground">
                 {lead.subject}, {ageLabel(lead.ageMin, lead.ageMax).toLowerCase()}
@@ -51,7 +46,8 @@ export function FeaturedBooks({ books }: { books: Book[] }) {
           {rest.length > 0 && (
             <ul className="grid grid-cols-2 gap-x-5 gap-y-12 self-end sm:grid-cols-3 sm:gap-x-6 lg:col-span-7 lg:col-start-6 lg:row-start-2">
               {rest.map((book, i) => (
-                <li key={book.id}>
+                // Two columns on phones: the third pick would sit alone, so it waits for the wider grid.
+                <li key={book.id} className={i === 2 ? 'max-sm:hidden' : undefined}>
                   <BookCard book={book} index={i + 1} />
                 </li>
               ))}

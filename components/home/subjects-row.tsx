@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
+import { SubjectMark } from '@/components/subject-mark'
 
 export function SubjectsRow({ subjects }: { subjects: string[] }) {
   if (subjects.length === 0) return null
@@ -21,7 +22,13 @@ export function SubjectsRow({ subjects }: { subjects: string[] }) {
                 href={`/catalog?subject=${encodeURIComponent(s)}`}
                 className="group flex items-center justify-between gap-6 py-6 text-2xl font-bold tracking-[-0.02em] text-background/85 transition-colors hover:text-background focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-background md:py-7 md:text-4xl"
               >
-                {s}
+                <span className="flex items-center gap-5 md:gap-7">
+                  <SubjectMark
+                    subject={s}
+                    className="size-7 shrink-0 text-accent transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:rotate-[-8deg] motion-reduce:transition-none md:size-9"
+                  />
+                  {s}
+                </span>
                 <ArrowRight
                   aria-hidden="true"
                   className="size-6 shrink-0 transition-transform duration-300 text-accent group-hover:translate-x-1.5 motion-reduce:transition-none md:size-8"

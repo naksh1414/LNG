@@ -73,7 +73,7 @@ export function CatalogClient({
         {shown.length} {shown.length === 1 ? 'title' : 'titles'}
       </p>
       {shown.length ? (
-        <ul className="mt-6 grid grid-cols-2 gap-x-5 gap-y-14 sm:gap-x-6 lg:grid-cols-4 lg:gap-y-16">
+        <ul className="mt-6 grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 sm:gap-y-14 lg:grid-cols-4 lg:gap-y-16">
           {shown.map(({ book, index }) => (
             <motion.li
               key={book.id}

@@ -10,8 +10,8 @@ const slots = [
   { left: '0%', top: '16%', z: 1, rest: { x: 0, y: 0, rotate: -11 }, hover: { x: -28, y: 6, rotate: -15 } },
   { left: '54%', top: '13%', z: 2, rest: { x: 0, y: 0, rotate: 9 }, hover: { x: 28, y: 4, rotate: 13 } },
 ]
-// Cover colour alternates on index parity: slate front, terracotta wings.
-const colourIndex = [0, 1, 3]
+// Cover ground follows index: slate front, terracotta and pale slate wings.
+const colourIndex = [0, 1, 2]
 const spring = { type: 'spring', stiffness: 140, damping: 18 } as const
 
 export function CoverFan({ books }: { books: Book[] }) {
