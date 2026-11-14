@@ -23,25 +23,26 @@ export type Book = {
 
 export type BookInput = Omit<Book, 'id' | 'createdAt' | 'updatedAt' | 'slug'> & { slug?: string }
 
-const text = z.string().trim().min(1).max(120)
-const age = z.number().int().min(0).max(18)
+// Messages are shown inline in the admin book form.
+const text = (field: string) => z.string().trim().min(1, `Enter ${field}.`).max(120, 'Use 120 characters or fewer.')
+const age = z.number('Enter an age.').int('Use a whole number.').min(0, 'Use 0 to 18.').max(18, 'Use 0 to 18.')
 
 export const bookInputSchema = z
   .object({
-    title: text,
-    subtitle: z.string().max(240),
-    author: text,
-    slug: z.string().optional(),
-    subject: text,
+    title: text('a title'),
+    subtitle: z.string().max(240, 'Use 240 characters or fewer.'),
+    author: text('an author'),
+    slug: z.string().max(120, 'Use 120 characters or fewer.').optional(),
+    subject: text('a subject'),
     ageMin: age,
     ageMax: age,
-    description: z.string().max(2000),
-    coverUrl: z.url({ protocol: /^https$/ }).nullable(),
-    coverAlt: z.string(),
-    isbn: z.string().optional(),
-    pages: z.number().int().positive().optional(),
-    language: z.string().optional(),
+    description: z.string().max(2000, 'Use 2000 characters or fewer.'),
+    coverUrl: z.url({ protocol: /^https$/, error: 'Upload the cover again.' }).nullable(),
+    coverAlt: z.string().max(240, 'Use 240 characters or fewer.'),
+    isbn: z.string().max(32, 'Use 32 characters or fewer.').optional(),
+    pages: z.number('Enter a number of pages.').int('Use a whole number.').positive('Use a positive number.').optional(),
+    language: z.string().max(60, 'Use 60 characters or fewer.').optional(),
     featured: z.boolean(),
     published: z.boolean(),
   })
-  .refine((b) => b.ageMin <= b.ageMax, { path: ['ageMax'], message: 'ageMax must be at least ageMin' })
+  .refine((b) => b.ageMin <= b.ageMax, { path: ['ageMax'], message: 'The oldest age must be at least the youngest age.' })

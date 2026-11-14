@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { clientIp } from './request'
+import { clientIp, isCrossOrigin } from './request'
 
 const h = (init: Record<string, string>) => new Headers(init)
 
@@ -19,5 +19,20 @@ describe('clientIp', () => {
   it('falls back to unknown', () => {
     expect(clientIp(h({}))).toBe('unknown')
     expect(clientIp(h({ 'x-forwarded-for': '' }))).toBe('unknown')
+  })
+})
+
+describe('isCrossOrigin', () => {
+  const req = (origin?: string) => new Request('https://lng.example/api/admin/books', { method: 'POST', headers: origin ? { origin } : {} })
+
+  it('allows the same origin and a missing Origin', () => {
+    expect(isCrossOrigin(req('https://lng.example'))).toBe(false)
+    expect(isCrossOrigin(req())).toBe(false)
+  })
+
+  it('flags another origin and an opaque null origin', () => {
+    expect(isCrossOrigin(req('https://evil.example'))).toBe(true)
+    expect(isCrossOrigin(req('https://lng.example.evil.example'))).toBe(true)
+    expect(isCrossOrigin(req('null'))).toBe(true)
   })
 })

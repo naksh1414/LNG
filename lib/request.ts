@@ -8,3 +8,15 @@ export function clientIp(headers: Headers): string {
     'unknown'
   )
 }
+
+// Defence in depth beside the SameSite=lax cookie: a browser always sends Origin on POST, PATCH and DELETE.
+// A missing Origin (curl, server to server) is allowed; the session cookie still gates it.
+export function isCrossOrigin(request: Request): boolean {
+  const origin = request.headers.get('origin')
+  if (!origin) return false
+  try {
+    return new URL(origin).host !== new URL(request.url).host
+  } catch {
+    return true
+  }
+}
