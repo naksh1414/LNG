@@ -26,6 +26,7 @@ export async function ensureIndexes(): Promise<void> {
   // 13 months at 30 days each.
   await db.collection('events').createIndex({ createdAt: 1 }, { expireAfterSeconds: 13 * 30 * 24 * 60 * 60 })
   await db.collection('enquiries').createIndex({ createdAt: -1, read: 1 })
+  await db.collection('admins').createIndex({ email: 1 }, { unique: true })
 }
 
 // Indexes are created lazily, once per process.
