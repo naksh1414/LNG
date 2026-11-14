@@ -1,25 +1,26 @@
 import Link from 'next/link'
-import { ArrowRight, ArrowUpRight } from 'lucide-react'
+import { Reveal } from '@/components/reveal'
+import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
+import { buttonVariants } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 export const metadata = {
   title: 'About us',
-  description: 'Meet LEARN AND GROW, an independent publisher of Montessori-inspired books for curious children, families and educators.',
+  description:
+    'Meet Learn and Grow, an independent publisher of Montessori-inspired books for curious children, families and educators.',
 }
 
 const principles = [
   {
-    number: '01',
     title: 'Follow the question',
     copy: 'A child’s curiosity is a wonderful place to begin. Our books invite exploration instead of rushing to the answer.',
   },
   {
-    number: '02',
     title: 'Respect their pace',
     copy: 'Every child meets the world in their own way. We make thoughtful books that leave room for different paths and discoveries.',
   },
   {
-    number: '03',
     title: 'Make learning tangible',
     copy: 'Clear language, considered details and hands-on ideas help children connect what they read with the world around them.',
   },
@@ -29,53 +30,85 @@ export default function AboutPage() {
   return (
     <>
       <SiteHeader />
-      <main className="about-page">
-        <section className="about-hero">
-          <p className="eyebrow">A LITTLE ABOUT US</p>
-          <h1>Books for the<br /><em>way children wonder.</em></h1>
-          <p className="about-lede">LEARN AND GROW is an independent publishing house creating Montessori-inspired books for curious children and the grown-ups learning alongside them.</p>
+      <main>
+        <section className="mx-auto max-w-6xl px-5 pt-20 pb-20 md:pt-32 md:pb-28">
+          <h1 className="max-w-[13ch] text-[2.6rem] leading-[1] font-extrabold tracking-[-0.045em] text-balance sm:text-7xl lg:text-[6.5rem]">
+            Books for the way children wonder.
+          </h1>
+          <p className="mt-10 max-w-[44ch] text-xl leading-relaxed text-muted-foreground md:mt-14 md:ml-[33%] md:text-2xl">
+            Learn and Grow is an independent publishing house creating Montessori-inspired books for curious children
+            and the grown-ups learning alongside them.
+          </p>
         </section>
 
-        <section className="about-story" id="approach">
-          <p className="section-index">01 / OUR POINT OF VIEW</p>
-          <div className="about-story-copy">
-            <h2>Children are not empty vessels.<br /><em>They arrive full of questions.</em></h2>
-            <p>We believe a good book can open a door, then give a child the time and space to walk through it. That belief shapes what we publish: inviting stories, useful ideas and beautiful details made to be returned to.</p>
-            <p>Guided by Montessori principles, our work begins with respect for children as capable, active learners. We create books for home, classroom and everywhere a new question takes root.</p>
+        <section id="approach" aria-labelledby="approach-heading" className="scroll-mt-20 border-t border-border">
+          <div className="mx-auto grid max-w-6xl gap-10 px-5 py-20 md:py-28 lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)] lg:gap-20">
+            <Reveal>
+              <h2
+                id="approach-heading"
+                className="max-w-[18ch] text-4xl leading-[1.05] font-bold tracking-[-0.03em] text-balance md:text-5xl"
+              >
+                Children are not empty vessels. They arrive full of questions.
+              </h2>
+            </Reveal>
+            <Reveal delay={0.08}>
+              <div className="grid max-w-[52ch] gap-6 text-lg leading-relaxed text-muted-foreground lg:pt-2">
+                <p>
+                  We believe a good book can open a door, then give a child the time and space to walk through it.
+                  That belief shapes what we publish: inviting stories, useful ideas and beautiful details made to be
+                  returned to.
+                </p>
+                <p>
+                  Guided by Montessori principles, our work begins with respect for children as capable, active
+                  learners. We create books for home, classroom and everywhere a new question takes root.
+                </p>
+              </div>
+            </Reveal>
           </div>
         </section>
 
-        <section className="about-principles">
-          <div className="section-heading">
-            <div><p className="eyebrow">WHAT GUIDES THE WORK</p><h2>Small things, thoughtfully made.</h2></div>
-          </div>
-          <div className="principle-grid">
-            {principles.map((principle) => (
-              <article className="principle-card" key={principle.number}>
-                <span className="principle-number">{principle.number}</span>
-                <h3>{principle.title}</h3>
-                <p>{principle.copy}</p>
-              </article>
-            ))}
+        <section aria-labelledby="principles-heading" className="bg-tint">
+          <div className="mx-auto max-w-6xl px-5 py-20 md:py-28">
+            <Reveal>
+              <h2 id="principles-heading" className="text-4xl font-bold tracking-[-0.03em] text-balance md:text-5xl">
+                Small things, thoughtfully made.
+              </h2>
+            </Reveal>
+            <ul className="mt-12 border-b-2 border-foreground md:mt-16">
+              {principles.map((p) => (
+                <li
+                  key={p.title}
+                  className="grid gap-3 border-t-2 border-foreground py-8 md:grid-cols-[minmax(0,6fr)_minmax(0,5fr)] md:gap-10 md:py-10 lg:gap-20"
+                >
+                  <h3 className="text-2xl font-bold tracking-[-0.02em] md:text-3xl">{p.title}</h3>
+                  <p className="max-w-[46ch] text-lg leading-relaxed text-muted-foreground">{p.copy}</p>
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
 
-        <section className="about-invitation">
-          <p className="eyebrow">FOR READERS, FAMILIES & EDUCATORS</p>
-          <h2>Find a book to begin with.</h2>
-          <p>Whether you’re choosing a first title or building a classroom shelf, we’d love to help you find the right place to start.</p>
-          <div className="hero-actions">
-            <Link href="/catalog" className="button-primary">Explore the books <ArrowRight aria-hidden="true" /></Link>
-            <Link href="/#contact" className="button-quiet">Get in touch <ArrowUpRight aria-hidden="true" /></Link>
-          </div>
+        <section aria-labelledby="begin-heading" className="mx-auto max-w-6xl px-5 py-20 md:py-28">
+          <Reveal>
+            <h2 id="begin-heading" className="text-4xl font-bold tracking-[-0.03em] text-balance md:text-5xl">
+              Find a book to begin with.
+            </h2>
+            <p className="mt-5 max-w-[48ch] text-lg leading-relaxed text-muted-foreground">
+              Whether you’re choosing a first title or building a classroom shelf, we’d love to help you find the
+              right place to start.
+            </p>
+            <div className="mt-10 flex flex-wrap gap-3">
+              <Link href="/catalog" className={cn(buttonVariants(), 'h-12 px-7 text-base')}>
+                Explore the books
+              </Link>
+              <Link href="/contact" className={cn(buttonVariants({ variant: 'quiet' }), 'h-12 px-7 text-base')}>
+                Get in touch
+              </Link>
+            </div>
+          </Reveal>
         </section>
       </main>
-      <footer className="site-footer">
-        <Link href="/" className="wordmark"><span className="wordmark-mark" aria-hidden="true">LG</span><span>LEARN AND GROW<span className="wordmark-sub">PRESS · EST. 2012</span></span></Link>
-        <span>Books made with care, for the curious.</span>
-        <a href={process.env.NEXT_PUBLIC_CONTACT_EMAIL ? `mailto:${process.env.NEXT_PUBLIC_CONTACT_EMAIL}` : '/#contact'}>Say hello <ArrowUpRight aria-hidden="true" /></a>
-        <small>© 2026 LEARN AND GROW</small>
-      </footer>
+      <SiteFooter />
     </>
   )
 }
