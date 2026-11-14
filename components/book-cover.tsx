@@ -26,12 +26,12 @@ export function BookCover({ book, index = 0, className, priority, decorative }: 
       aria-hidden="true" // the title and author are repeated as real text next to the cover
       className={cn(
         frame,
-        'flex flex-col justify-between p-6',
+        '@container flex flex-col justify-between p-4 sm:p-6',
         index % 2 === 0 ? 'bg-foreground text-background' : 'bg-accent text-accent-foreground',
       )}
     >
-      <span className="text-balance text-2xl leading-tight font-bold">{book.title}</span>
-      <span className="text-sm font-medium">{book.author}</span>
+      <span className="text-balance text-lg leading-tight font-bold @[13rem]:text-2xl @[24rem]:text-4xl">{book.title}</span>
+      <span className="text-xs font-medium @[13rem]:text-sm @[24rem]:text-base">{book.author}</span>
     </span>
   )
 }

@@ -11,9 +11,17 @@ import { cn } from '@/lib/utils'
 
 const ALL = 'All books'
 
-export function CatalogClient({ books, subjects }: { books: Book[]; subjects: string[] }) {
+export function CatalogClient({
+  books,
+  subjects,
+  initialSubject,
+}: {
+  books: Book[]
+  subjects: string[]
+  initialSubject?: string
+}) {
   const reduce = useReducedMotion()
-  const [subject, setSubject] = useState(ALL)
+  const [subject, setSubject] = useState(initialSubject && subjects.includes(initialSubject) ? initialSubject : ALL)
   const [query, setQuery] = useState('')
   const q = query.trim().toLowerCase()
   const shown = books

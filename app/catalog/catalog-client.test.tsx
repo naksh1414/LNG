@@ -36,6 +36,18 @@ describe('CatalogClient', () => {
     expect(screen.getByText('1 title')).toBeInTheDocument()
   })
 
+  it('catalogue honors ?subject= as the initial filter', () => {
+    render(<CatalogClient books={books} subjects={subjects} initialSubject="Language" />)
+    expect(screen.getByRole('button', { name: 'Language' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('link', { name: /Word Book/ })).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /Seed Book/ })).toBeNull()
+  })
+
+  it('ignores an unknown ?subject= and shows all books', () => {
+    render(<CatalogClient books={books} subjects={subjects} initialSubject="Nope" />)
+    expect(screen.getByRole('button', { name: 'All books' })).toHaveAttribute('aria-pressed', 'true')
+  })
+
   it('filters by search text across title, author and subject', async () => {
     render(<CatalogClient books={books} subjects={subjects} />)
     const box = screen.getByRole('searchbox', { name: 'Search books' })

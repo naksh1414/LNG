@@ -28,8 +28,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body className={`${font.variable} antialiased`}>
+    <html lang="en" className={font.variable}>
+      <body className="antialiased">
         {children}
         <AnalyticsTracker />
         {process.env.NODE_ENV === 'production' && <Analytics />}
