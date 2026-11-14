@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { Menu, X } from 'lucide-react'
 import { site } from '@/lib/site'
@@ -8,8 +9,11 @@ import { Wordmark } from './wordmark'
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false)
+  const path = usePathname() ?? ''
+  // Hash links (For schools, Contact) are sections of home, so they never mark a page as current.
+  const current = (href: string) => !href.includes('#') && (path === href || (href === '/catalog' && path.startsWith('/books/')))
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background">
+    <header className="sticky top-0 z-40 border-b border-border bg-background/92 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 md:h-[68px]">
         <Wordmark />
         <button
@@ -32,9 +36,14 @@ export function SiteHeader() {
               key={item.href}
               href={item.href}
               onClick={() => setOpen(false)}
-              className="py-2 text-sm font-medium whitespace-nowrap text-foreground hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              aria-current={current(item.href) ? 'page' : undefined}
+              className="group relative py-2 text-sm font-medium whitespace-nowrap text-foreground hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent aria-[current=page]:font-semibold"
             >
               {item.label}
+              <span
+                aria-hidden="true"
+                className="absolute inset-x-0 bottom-0.5 h-0.5 origin-left scale-x-0 bg-accent transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100 group-aria-[current=page]:scale-x-100 motion-reduce:transition-none max-md:hidden"
+              />
             </Link>
           ))}
         </nav>

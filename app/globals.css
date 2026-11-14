@@ -77,6 +77,21 @@
   h1, h2, h3, h4 {
     font-family: var(--font-heading);
     letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  ::selection {
+    background: var(--accent);
+    color: var(--accent-foreground);
+  }
+  input, textarea {
+    caret-color: var(--accent);
+  }
+  a {
+    text-underline-offset: 0.25em;
+    text-decoration-thickness: 1px;
   }
   :focus-visible {
     outline: 2px solid var(--accent);
