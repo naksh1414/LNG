@@ -14,7 +14,7 @@ export function SiteHeader() {
         <Wordmark />
         <button
           type="button"
-          className="inline-flex size-10 items-center justify-center text-foreground md:hidden"
+          className="inline-flex size-10 items-center justify-center text-foreground md:hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           aria-label={open ? 'Close menu' : 'Open menu'}
           aria-expanded={open}
           aria-controls="main-nav"
@@ -32,7 +32,7 @@ export function SiteHeader() {
               key={item.href}
               href={item.href}
               onClick={() => setOpen(false)}
-              className="py-2 text-sm font-medium whitespace-nowrap text-foreground hover:text-accent"
+              className="py-2 text-sm font-medium whitespace-nowrap text-foreground hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
               {item.label}
             </Link>

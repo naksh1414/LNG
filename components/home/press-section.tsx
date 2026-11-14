@@ -48,7 +48,7 @@ export function PressSection() {
         </ul>
         <Link
           href="/about"
-          className="mt-10 inline-block text-sm font-semibold underline underline-offset-4 hover:text-accent"
+          className="mt-10 inline-block text-sm font-semibold underline underline-offset-4 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
           More about the press
         </Link>

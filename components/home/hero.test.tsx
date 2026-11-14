@@ -1,5 +1,7 @@
 import { render, screen } from '@testing-library/react'
+import { renderToString } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
+import { CoverFan } from './cover-fan'
 import { makeBook } from './fixtures'
 import { Hero } from './hero'
 import { SubjectsRow } from './subjects-row'
@@ -16,6 +18,12 @@ describe('Hero', () => {
     const sub = screen.getByTestId('hero-subtext').textContent ?? ''
     expect(sub.trim().split(/\s+/).length).toBeLessThanOrEqual(20)
     expect(screen.getByTestId('cover-fan')).toBeInTheDocument()
+  })
+
+  it('cover fan is visible in the server HTML (no opacity 0 before hydration)', () => {
+    const html = renderToString(<CoverFan books={[makeBook('One'), makeBook('Two'), makeBook('Three')]} />)
+    expect(html).toContain('One')
+    expect(html).not.toMatch(/opacity:\s*0(?![.\d])/)
   })
 
   it('hero renders with zero books (no cover fan, no crash)', () => {

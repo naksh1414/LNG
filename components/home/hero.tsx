@@ -8,7 +8,7 @@ export function Hero({ books }: { books: Book[] }) {
   return (
     <section className="mx-auto grid min-h-[100dvh] max-w-6xl items-center gap-14 px-5 pt-16 pb-24 md:pt-24 lg:pb-36 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-10">
       <div>
-        <h1 className="text-[1.95rem] leading-[1.05] font-extrabold tracking-[-0.035em] text-balance sm:text-6xl lg:text-[3.75rem]">
+        <h1 className="text-[1.95rem] leading-[1.05] font-extrabold tracking-[-0.035em] text-balance sm:text-5xl md:text-6xl lg:text-[3.75rem]">
           Montessori books for homes and classrooms.
         </h1>
         <p data-testid="hero-subtext" className="mt-7 max-w-[38ch] text-lg leading-relaxed text-muted-foreground md:text-xl">

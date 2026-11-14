@@ -22,23 +22,22 @@ export function CoverFan({ books }: { books: Book[] }) {
     <motion.div
       data-testid="cover-fan"
       className="relative mx-auto aspect-[5/4] w-[88%] max-w-[34rem] sm:w-full"
-      initial={reduce ? false : 'hidden'}
+      initial={false}
       animate="rest"
       whileHover={reduce ? undefined : 'hover'}
     >
       {shown.map((book, i) => {
         const slot = slots[i]
         const variants: Variants = {
-          hidden: { opacity: 0, y: 48, rotate: 0 },
-          rest: { opacity: 1, ...slot.rest, transition: { ...spring, delay: 0.15 + i * 0.08 } },
+          rest: { ...slot.rest, transition: spring },
           hover: { ...slot.hover, transition: spring },
         }
         return (
           <motion.div
             key={book.id}
             variants={variants}
-            className="absolute w-[46%] shadow-[0_30px_60px_-28px_rgba(35,44,54,0.55)]"
-            style={{ left: slot.left, top: slot.top, zIndex: slot.z }}
+            className="fan-in absolute w-[46%] shadow-[0_30px_60px_-28px_rgba(35,44,54,0.55)]"
+            style={{ left: slot.left, top: slot.top, zIndex: slot.z, animationDelay: `${150 + i * 80}ms` }}
           >
             <BookCover book={book} index={colourIndex[i]} priority={i === 0} decorative />
           </motion.div>

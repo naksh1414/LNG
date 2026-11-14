@@ -13,7 +13,9 @@ export function BookCover({ book, index = 0, className, priority, decorative }: 
         <Image
           src={book.coverUrl}
           alt={decorative ? '' : book.coverAlt || `Cover of ${book.title}`}
-          priority={priority}
+          // Next 16 deprecates priority; eager + high fetch priority for the one above-the-fold cover.
+          loading={priority ? 'eager' : 'lazy'}
+          fetchPriority={priority ? 'high' : undefined}
           fill
           sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
           className="object-cover"

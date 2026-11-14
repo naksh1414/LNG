@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Reveal } from '@/components/reveal'
 import { buttonVariants } from '@/components/ui/button'
+import { site } from '@/lib/site'
 import { cn } from '@/lib/utils'
 
 const points = [
@@ -18,6 +19,8 @@ const points = [
   },
 ]
 
+const contactHref = site.nav.find((n) => n.label === 'Contact')!.href
+
 export function SchoolsSection() {
   return (
     <section id="schools" aria-labelledby="schools-heading" className="scroll-mt-20 bg-tint">
@@ -32,7 +35,7 @@ export function SchoolsSection() {
                 Schools and teachers can order our books in sets for classrooms and libraries.
               </p>
             </div>
-            <Link href="/#contact" className={cn(buttonVariants(), 'h-12 self-start px-7 text-base md:self-auto')}>
+            <Link href={contactHref} className={cn(buttonVariants(), 'h-12 self-start px-7 text-base md:self-auto')}>
               Ask about classroom orders
             </Link>
           </div>

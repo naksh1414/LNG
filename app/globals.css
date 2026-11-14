@@ -23,6 +23,7 @@
   --color-border: var(--border);
   --color-tint: var(--tint);
   --color-input: var(--input);
+  --color-field: var(--field);
   --color-ring: var(--ring);
   --radius-sm: 0px;
   --radius-md: 0px;
@@ -55,7 +56,9 @@
   --secondary-foreground: var(--foreground);
   --muted: var(--border);
   --destructive: #a32d1a;
-  --input: var(--border);
+  /* Form field edge: 3.3:1 on the page background (AA non-text 3:1) */
+  --input: #80878f;
+  --field: #ffffff;
   --ring: var(--accent);
 }
 
@@ -83,5 +86,18 @@
     html {
       scroll-behavior: auto;
     }
+  }
+}
+
+/* Cover fan entrance: CSS only, so covers are visible in the server HTML and stay put for reduced motion.
+   Uses the individual translate property so it composes with motion's hover transform. */
+@keyframes fan-in {
+  from {
+    translate: 0 48px;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .fan-in {
+    animation: fan-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 }

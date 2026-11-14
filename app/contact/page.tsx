@@ -30,7 +30,7 @@ export default function ContactPage() {
                 <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-border py-5">
                   <dt className="text-muted-foreground">Email</dt>
                   <dd>
-                    <a href={`mailto:${email}`} className="font-semibold break-all underline underline-offset-4 hover:text-accent">
+                    <a href={`mailto:${email}`} className="font-semibold break-all underline underline-offset-4 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
                       {email}
                     </a>
                   </dd>
@@ -44,7 +44,7 @@ export default function ContactPage() {
                       href={`https://wa.me/${wa}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-semibold underline underline-offset-4 hover:text-accent"
+                      className="font-semibold underline underline-offset-4 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                     >
                       +{wa}
                     </a>

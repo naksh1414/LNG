@@ -23,7 +23,7 @@ export function EnquirySection() {
                 href={`https://wa.me/${wa}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-semibold underline underline-offset-4 hover:text-accent"
+                className="font-semibold underline underline-offset-4 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
                 Message us on WhatsApp
               </a>

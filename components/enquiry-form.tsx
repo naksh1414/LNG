@@ -48,7 +48,7 @@ export function EnquiryForm({ book }: Props) {
     if (message.length < LIMITS.message.min) next.message = 'Enter a message.'
     setErrors(next)
     const firstInvalid = (['name', 'contact', 'message'] as const).find((f) => next[f])
-    if (firstInvalid) return form.querySelector<HTMLElement>(`#${firstInvalid}`)?.focus()
+    if (firstInvalid) return form.querySelector<HTMLElement>(`#enquiry-${firstInvalid}`)?.focus()
 
     // Open the window now, inside the user gesture; browsers block window.open after an await.
     const whatsapp = buildWhatsAppUrl(site.whatsappNumber, { name, contact, message, bookTitle: book?.title })
@@ -98,7 +98,7 @@ export function EnquiryForm({ book }: Props) {
             className={
               result.blocked
                 ? buttonVariants({ className: 'mt-4' })
-                : 'mt-2 inline-block text-sm font-semibold text-foreground underline underline-offset-2'
+                : 'mt-2 inline-block text-sm font-semibold text-foreground underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
             }
           >
             Open WhatsApp
@@ -108,30 +108,31 @@ export function EnquiryForm({ book }: Props) {
     )
   }
 
+  // Prefixed ids: the home page also has section#contact.
   const field = (id: FieldName) => ({
-    id,
+    id: `enquiry-${id}`,
     name: id,
     'aria-invalid': errors[id] ? true : undefined,
-    'aria-describedby': errors[id] ? `${id}-error` : undefined,
+    'aria-describedby': errors[id] ? `enquiry-${id}-error` : undefined,
   })
 
   return (
     <form onSubmit={onSubmit} noValidate className="relative grid gap-5">
       {book && <p className="text-sm text-muted-foreground">About: {book.title}</p>}
       <div>
-        <Label htmlFor="name" className="mb-1.5 block">Your name</Label>
+        <Label htmlFor="enquiry-name" className="mb-1.5 block">Your name</Label>
         <Input {...field('name')} autoComplete="name" maxLength={LIMITS.name.max} />
-        {errors.name && <p id="name-error" className={errorClass}>{errors.name}</p>}
+        {errors.name && <p id="enquiry-name-error" className={errorClass}>{errors.name}</p>}
       </div>
       <div>
-        <Label htmlFor="contact" className="mb-1.5 block">Phone or email</Label>
+        <Label htmlFor="enquiry-contact" className="mb-1.5 block">Phone or email</Label>
         <Input {...field('contact')} autoComplete="email" maxLength={LIMITS.contact.max} />
-        {errors.contact && <p id="contact-error" className={errorClass}>{errors.contact}</p>}
+        {errors.contact && <p id="enquiry-contact-error" className={errorClass}>{errors.contact}</p>}
       </div>
       <div>
-        <Label htmlFor="message" className="mb-1.5 block">Message</Label>
+        <Label htmlFor="enquiry-message" className="mb-1.5 block">Message</Label>
         <Textarea {...field('message')} maxLength={LIMITS.message.max} />
-        {errors.message && <p id="message-error" className={errorClass}>{errors.message}</p>}
+        {errors.message && <p id="enquiry-message-error" className={errorClass}>{errors.message}</p>}
       </div>
       {/* Honeypot: hidden from people and assistive tech; bots fill it. */}
       <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">

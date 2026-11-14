@@ -21,3 +21,16 @@ See `.env.example`: `MONGODB_URI`, `MONGODB_DB`, `SESSION_SECRET`, `ADMIN_EMAIL`
 - `pnpm build` production build
 - `pnpm seed` load the starting catalogue into MongoDB (export `MONGODB_URI` and `MONGODB_DB` first; tsx does not read `.env.local`)
 - `pnpm seed-admin` create the admin user from `ADMIN_EMAIL` / `ADMIN_PASSWORD`
+
+## Performance
+
+Lighthouse 13.6.0 (default mobile profile, simulated throttling) against `pnpm start` with the seeded local catalogue, 2026-11-14:
+
+| Page | LCP | CLS |
+| --- | --- | --- |
+| `/` | 0.8 s | 0 |
+| `/catalog` | 0.7 s | 0 |
+
+Targets: LCP under 2.5 s, CLS under 0.1. Re-run with `CHROME_PATH=/usr/bin/chromium pnpm dlx lighthouse http://localhost:3000/ --chrome-flags="--headless --no-sandbox"`.
+
+Seeded books have no cover images (covers are generated text blocks), so these numbers do not yet include uploaded cover photos.

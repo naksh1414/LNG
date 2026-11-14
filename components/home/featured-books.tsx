@@ -21,7 +21,7 @@ export function FeaturedBooks({ books }: { books: Book[] }) {
             </p>
             <Link
               href="/catalog"
-              className="mt-6 inline-block text-sm font-semibold underline underline-offset-4 hover:text-accent"
+              className="mt-6 inline-block text-sm font-semibold underline underline-offset-4 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
               See all books
             </Link>
