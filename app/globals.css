@@ -21,6 +21,7 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-border: var(--border);
+  --color-tint: var(--tint);
   --color-input: var(--input);
   --color-ring: var(--ring);
   --radius-sm: 0px;
@@ -39,6 +40,8 @@
   --foreground: #232c36;
   --muted-foreground: #5f6872;
   --border: #dcdcd8;
+  /* Pale slate band for the schools section */
+  --tint: #e3e7ea;
   /* Terracotta, darkened from #c4572f so white text reaches 5.09:1 (AA) */
   --accent: #b84d27;
   --accent-foreground: #ffffff;

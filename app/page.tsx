@@ -1,5 +1,8 @@
+import { EnquirySection } from '@/components/home/enquiry-section'
 import { FeaturedBooks } from '@/components/home/featured-books'
 import { Hero } from '@/components/home/hero'
+import { PressSection } from '@/components/home/press-section'
+import { SchoolsSection } from '@/components/home/schools-section'
 import { SubjectsRow } from '@/components/home/subjects-row'
 import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
@@ -18,6 +21,9 @@ export default async function HomePage() {
         <Hero books={featured.slice(0, 3)} />
         <SubjectsRow subjects={subjects} />
         <FeaturedBooks books={featured} />
+        <SchoolsSection />
+        <PressSection />
+        <EnquirySection />
       </main>
       <SiteFooter />
     </>
