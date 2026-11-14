@@ -38,7 +38,7 @@ export function CatalogClient({
 
   return (
     <section aria-label="Browse our books">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col gap-5 border-t-2 border-foreground pt-6 md:flex-row md:items-center md:justify-between">
         <div role="group" aria-label="Filter by subject" className="flex flex-wrap gap-2">
           {[ALL, ...subjects].map((s) => (
             <button
@@ -47,10 +47,10 @@ export function CatalogClient({
               aria-pressed={subject === s}
               onClick={() => setSubject(s)}
               className={cn(
-                'h-9 border px-3.5 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
+                'h-10 border px-4 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
                 subject === s
-                  ? 'border-accent bg-accent text-accent-foreground'
-                  : 'border-border text-foreground hover:border-foreground',
+                  ? 'border-foreground bg-foreground text-background'
+                  : 'border-input text-foreground hover:border-foreground hover:bg-foreground/5',
               )}
             >
               {s}
@@ -66,14 +66,14 @@ export function CatalogClient({
             setQuery(e.target.value)
             trackSearch(e.target.value)
           }}
-          className="md:max-w-xs"
+          className="md:max-w-[17rem]"
         />
       </div>
-      <p aria-live="polite" className="mt-6 text-sm text-muted-foreground">
+      <p aria-live="polite" className="mt-8 text-sm text-muted-foreground">
         {shown.length} {shown.length === 1 ? 'title' : 'titles'}
       </p>
       {shown.length ? (
-        <ul className="mt-6 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+        <ul className="mt-6 grid grid-cols-2 gap-x-5 gap-y-14 sm:gap-x-6 lg:grid-cols-4 lg:gap-y-16">
           {shown.map(({ book, index }) => (
             <motion.li
               key={book.id}
@@ -86,16 +86,16 @@ export function CatalogClient({
           ))}
         </ul>
       ) : (
-        <div className="mt-10 border border-border p-10 text-center">
+        <div className="mt-6 border-t border-border py-16 md:py-24">
           {books.length === 0 ? (
             <>
-              <h2 className="text-xl font-bold">No books yet</h2>
-              <p className="mt-2 text-muted-foreground">New titles are on the way. Please check back soon.</p>
+              <h2 className="text-3xl font-bold tracking-[-0.03em]">No books yet</h2>
+              <p className="mt-3 text-lg text-muted-foreground">New titles are on the way. Please check back soon.</p>
             </>
           ) : (
             <>
-              <h2 className="text-xl font-bold">No books found</h2>
-              <p className="mt-2 text-muted-foreground">Try another title, author or subject.</p>
+              <h2 className="text-3xl font-bold tracking-[-0.03em]">No books found</h2>
+              <p className="mt-3 text-lg text-muted-foreground">Try another title, author or subject.</p>
               <Button type="button" variant="quiet" className="mt-6" onClick={clear}>
                 Clear filters
               </Button>

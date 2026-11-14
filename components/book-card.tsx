@@ -10,12 +10,21 @@ export function BookCard({ book, index }: { book: Book; index: number }) {
         href={`/books/${book.slug}`}
         className="group block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
       >
-        <BookCover book={book} index={index} decorative />
-        <span className="mt-4 block text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-          {book.subject} &middot; {ageLabel(book.ageMin, book.ageMax)}
+        <span className="block overflow-hidden">
+          <BookCover
+            book={book}
+            index={index}
+            decorative
+            className="transition-transform duration-500 group-hover:scale-[1.02] motion-reduce:transition-none"
+          />
         </span>
-        <span className="mt-1 block text-lg font-bold text-foreground group-hover:text-accent">{book.title}</span>
-        <span className="mt-1 block text-sm text-muted-foreground">{book.subtitle}</span>
+        <span className="mt-4 block text-sm font-semibold text-muted-foreground">
+          {book.subject}, {ageLabel(book.ageMin, book.ageMax).toLowerCase()}
+        </span>
+        <span className="mt-1.5 block text-lg leading-snug font-bold tracking-[-0.01em] text-foreground transition-colors group-hover:text-accent">
+          {book.title}
+        </span>
+        {book.subtitle && <span className="mt-1 block text-sm leading-relaxed text-muted-foreground">{book.subtitle}</span>}
       </Link>
     </article>
   )

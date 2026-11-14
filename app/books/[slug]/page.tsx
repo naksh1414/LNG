@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { cache } from 'react'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
@@ -44,26 +45,40 @@ export default async function BookPage({ params }: Props) {
   return (
     <>
       <SiteHeader />
-      <main className="mx-auto grid max-w-6xl gap-10 px-5 py-12 md:grid-cols-2 md:gap-16 md:py-16">
-        <div className="mx-auto w-full max-w-md md:max-w-none">
-          <BookCover book={book} priority />
-        </div>
-        <div>
-          <h1 className="text-4xl font-bold text-balance md:text-5xl">{book.title}</h1>
-          {book.subtitle && <p className="mt-3 text-xl text-muted-foreground">{book.subtitle}</p>}
-          <p className="mt-4 font-semibold">{book.author}</p>
-          <p className="mt-6 max-w-prose leading-relaxed">{book.description}</p>
-          <dl className="mt-8 grid grid-cols-[auto_1fr] gap-x-8 gap-y-2 border-t border-border pt-6 text-sm">
-            {facts.map(([label, value]) =>
-              value === undefined || value === null || value === '' ? null : (
-                <div key={label} className="contents">
-                  <dt className="text-muted-foreground">{label}</dt>
-                  <dd className="font-medium">{value}</dd>
-                </div>
-              ),
+      <main className="mx-auto max-w-6xl px-5 pt-10 pb-24 md:pt-14 md:pb-32">
+        <Link
+          href="/catalog"
+          className="text-sm font-semibold text-muted-foreground underline-offset-4 hover:text-accent hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        >
+          All books
+        </Link>
+        <div className="mt-8 grid gap-12 md:mt-12 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:gap-16 lg:gap-24">
+          <div className="mx-auto w-[78%] max-w-sm md:w-full md:max-w-none md:self-start">
+            <div className="shadow-[0_30px_60px_-28px_rgba(35,44,54,0.55)]">
+              <BookCover book={book} priority />
+            </div>
+          </div>
+          <div>
+            <h1 className="text-[2.6rem] leading-[1] font-extrabold tracking-[-0.045em] text-balance sm:text-6xl">
+              {book.title}
+            </h1>
+            {book.subtitle && <p className="mt-5 text-xl leading-snug text-muted-foreground md:text-2xl">{book.subtitle}</p>}
+            <p className="mt-6 text-lg font-semibold">{book.author}</p>
+            {book.description && book.description !== book.subtitle && (
+              <p className="mt-8 max-w-[60ch] text-lg leading-relaxed">{book.description}</p>
             )}
-          </dl>
-          <EnquireButton book={{ id: book.id, title: book.title }} />
+            <dl className="mt-10 border-t-2 border-foreground">
+              {facts.map(([label, value]) =>
+                value === undefined || value === null || value === '' ? null : (
+                  <div key={label} className="flex items-baseline justify-between gap-6 border-b border-border py-3.5">
+                    <dt className="text-muted-foreground">{label}</dt>
+                    <dd className="text-right font-semibold">{value}</dd>
+                  </div>
+                ),
+              )}
+            </dl>
+            <EnquireButton book={{ id: book.id, title: book.title }} />
+          </div>
         </div>
       </main>
       <SiteFooter />
