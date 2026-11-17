@@ -52,7 +52,7 @@ describe('POST /api/enquiries', () => {
       title: 'Owl',
       subtitle: '',
       author: 'A',
-      subject: 'Nature',
+      series: 'Series', classLevel: 'Class 1', subject: 'Nature',
       ageMin: 3,
       ageMax: 6,
       description: 'd',

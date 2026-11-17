@@ -4,32 +4,42 @@ import { site } from '@/lib/site'
 import { Wordmark } from './wordmark'
 
 const link =
-  'text-background/75 transition-colors hover:text-background focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-background'
+  'w-fit text-muted-foreground transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
 
 export function SiteFooter() {
   const wa = normalizeNumber(site.whatsappNumber)
   return (
-    <footer className="bg-foreground text-background">
-      <div className="mx-auto grid max-w-6xl gap-12 px-5 pt-16 pb-10 md:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] md:pt-20">
+    <footer className="mt-8 bg-field">
+      {/* The logo's four colours as a thin top edge. */}
+      <div aria-hidden="true" className="h-1 bg-gradient-to-r from-[#eb2891] via-[#fdcc2d] to-[#2d5ba6]" />
+      <div className="mx-auto grid max-w-6xl gap-10 px-5 pt-14 pb-8 md:grid-cols-[minmax(0,6fr)_minmax(0,3fr)_minmax(0,3fr)] md:pt-16">
         <div>
-          <Wordmark className="text-background focus-visible:outline-background" />
-          <p className="mt-6 max-w-[30ch] text-2xl leading-snug font-bold tracking-[-0.02em] text-balance md:text-3xl">
+          <Wordmark />
+          <p className="mt-6 max-w-[26ch] text-2xl leading-snug font-bold tracking-[-0.02em] text-balance">
             Montessori books for homes and classrooms.
           </p>
         </div>
-        <nav aria-label="Footer" className="grid content-start gap-3 text-base md:justify-self-end">
+        <nav aria-label="Footer" className="grid content-start gap-3">
+          <p className="font-semibold">Explore</p>
           {site.nav.map((item) => (
             <Link key={item.href} href={item.href} className={link}>
               {item.label}
             </Link>
           ))}
-          {wa && (
+        </nav>
+        <div className="grid content-start gap-3">
+          <p className="font-semibold">Message</p>
+          {wa ? (
             <a href={`https://wa.me/${wa}`} className={link}>
               WhatsApp
             </a>
+          ) : (
+            <Link href="/#contact" className={link}>
+              Enquiry form
+            </Link>
           )}
-        </nav>
-        <p className="border-t border-background/15 pt-6 text-sm text-background/70 md:col-span-2">
+        </div>
+        <p className="border-t border-border pt-6 text-sm text-muted-foreground md:col-span-3">
           &copy; {new Date().getFullYear()} {site.name}. An independent press.
         </p>
       </div>

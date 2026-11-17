@@ -22,9 +22,9 @@ function Toggle({ on, label, busy, onClick }: { on: boolean; label: string; busy
       aria-label={label}
       disabled={busy}
       onClick={onClick}
-      className="relative inline-flex h-6 w-11 shrink-0 items-center border border-foreground/20 bg-tint transition-colors aria-checked:border-accent aria-checked:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50"
+      className="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full border border-foreground/20 bg-tint transition-colors aria-checked:border-accent aria-checked:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50"
     >
-      <span className={cn('size-4 bg-background shadow-sm transition-transform duration-150 ease-out', on ? 'translate-x-6' : 'translate-x-1')} />
+      <span className={cn('size-4 rounded-full bg-background shadow-sm transition-transform duration-150 ease-out', on ? 'translate-x-6' : 'translate-x-1')} />
     </button>
   )
 }
@@ -73,7 +73,7 @@ export function BookTable({ books: initial }: { books: Book[] }) {
 
   if (books.length === 0) {
     return (
-      <div className="border border-dashed border-border px-6 py-16 text-center">
+      <div className="rounded-lg border border-dashed border-border px-6 py-16 text-center">
         <p className="font-semibold text-foreground">No books yet.</p>
         <p className="mt-1 text-sm text-muted-foreground">Add the first title to start the catalogue.</p>
       </div>
@@ -83,12 +83,12 @@ export function BookTable({ books: initial }: { books: Book[] }) {
   return (
     <>
       {error && (
-        <p role="alert" className="mb-4 border-l-2 border-destructive bg-destructive/5 px-4 py-3 text-sm font-medium text-destructive">
+        <p role="alert" className="mb-4 rounded-r-sm border-l-2 border-destructive bg-destructive/5 px-4 py-3 text-sm font-medium text-destructive">
           {error}
         </p>
       )}
       {/* relative: keeps the sr-only header spans inside the scroller, not widening the page */}
-      <div className="relative overflow-x-auto border border-border bg-background">
+      <div className="relative overflow-x-auto rounded-lg border border-border bg-background">
         <table className="w-full min-w-[44rem] text-left text-sm">
           <thead className="border-b border-border bg-tint/50 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
             <tr>
@@ -107,9 +107,9 @@ export function BookTable({ books: initial }: { books: Book[] }) {
                 <td className="px-4 py-3">
                   {book.coverUrl ? (
                     // Plain img: an admin thumbnail does not need next/image resizing.
-                    <img src={book.coverUrl} alt="" loading="lazy" className="aspect-[3/4] w-10 border border-border object-cover" />
+                    <img src={book.coverUrl} alt="" loading="lazy" className="aspect-[3/4] w-10 rounded-l-spine rounded-r-cover border border-border object-cover" />
                   ) : (
-                    <span aria-hidden="true" className="flex aspect-[3/4] w-10 items-center justify-center bg-tint text-sm font-extrabold text-muted-foreground">
+                    <span aria-hidden="true" className="flex aspect-[3/4] w-10 items-center justify-center rounded-l-spine rounded-r-cover bg-tint text-sm font-extrabold text-muted-foreground">
                       {book.title.slice(0, 1)}
                     </span>
                   )}

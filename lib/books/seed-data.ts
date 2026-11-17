@@ -1,28 +1,32 @@
 import type { BookInput } from './types'
 
-type Row = [title: string, subtitle: string, author: string, subject: string, ageMin: number, ageMax: number]
+// One series with one subject; each book is a class. Ages come from the cover ("For Age 6+"):
+// 18 is the schema's upper limit and reads as "Ages 6+".
+type Row = [label: string, file: string, classLevel: string, ageMin: number]
 
 const rows: Row[] = [
-  ['The Quiet Observer', 'A child’s guide to noticing the world', 'Mira Ellison', 'Practical life', 3, 6],
-  ['Small Hands, Big Work', 'Everyday independence, one task at a time', 'Nora James', 'Practical life', 2, 5],
-  ['A Map of the Sky', 'Stories for the curious astronomer', 'Eli Navarro', 'Culture & science', 5, 9],
-  ['The Shape of a Seed', 'From a tiny beginning to a garden', 'Ada Reed', 'Nature', 4, 8],
-  ['Words We Carry', 'A first collection of poems for children', 'Samira Cole', 'Language', 6, 10],
-  ['Hands in the Earth', 'A year of tending, planting and waiting', 'Theo Martin', 'Nature', 3, 7],
-  ['Numbers in the Wild', 'Finding patterns on an ordinary walk', 'June Park', 'Culture & science', 4, 8],
-  ['A Room of One’s Own', 'Making space for independent play', 'Leah Bennett', 'Practical life', 2, 6],
+  ['A', 'a', 'Nursery', 3],
+  ['B', 'b', 'LKG', 4],
+  ['C', 'c', 'UKG', 5],
+  ['1', '1', 'Class 1', 6],
+  ['2', '2', 'Class 2', 7],
+  ['3', '3', 'Class 3', 8],
+  ['4', '4', 'Class 4', 9],
+  ['5', '5', 'Class 5', 10],
 ]
 
-export const seedBooks: BookInput[] = rows.map(([title, subtitle, author, subject, ageMin, ageMax], i) => ({
-  title,
-  subtitle,
-  author,
-  subject,
+export const seedBooks: BookInput[] = rows.map(([label, file, classLevel, ageMin], i) => ({
+  title: `Dreamscape Art and Craft ${label}`,
+  subtitle: `Art and craft for ${classLevel}`,
+  author: 'Learn N Grow',
+  series: 'Dreamscape',
+  subject: 'Art and craft',
+  classLevel,
   ageMin,
-  ageMax,
-  description: subtitle,
-  coverUrl: null,
-  coverAlt: `Cover of ${title}`,
+  ageMax: 18,
+  description: 'Colouring, drawing, activities, tear and paste, paper models, paper craft, origami and fun facts.',
+  coverUrl: `/Books/dreamscape-${file}.jpg`,
+  coverAlt: `Cover of Dreamscape Art and Craft ${label}`,
   featured: i < 4,
   published: true,
 }))

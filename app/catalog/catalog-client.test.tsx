@@ -10,6 +10,8 @@ const make = (title: string, author: string, subject: string): Book => ({
   subtitle: '',
   author,
   slug: title.toLowerCase().replace(/ /g, '-'),
+  series: 'Series',
+  classLevel: 'Class 1',
   subject,
   ageMin: 3,
   ageMax: 6,

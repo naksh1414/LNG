@@ -1,14 +1,11 @@
 import { render, screen } from '@testing-library/react'
-import { renderToString } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
-import { CoverFan } from './cover-fan'
-import { makeBook } from './fixtures'
 import { Hero } from './hero'
 import { SubjectsRow } from './subjects-row'
 
 describe('Hero', () => {
   it('hero has one h1, one primary and one secondary action, and a subtext of 20 words or fewer', () => {
-    render(<Hero books={[makeBook('One'), makeBook('Two'), makeBook('Three')]} />)
+    render(<Hero />)
     expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Montessori books for homes and classrooms.')
     const links = screen.getAllByRole('link')
@@ -17,20 +14,8 @@ describe('Hero', () => {
     expect(screen.getByRole('link', { name: 'For schools' })).toHaveAttribute('href', '/#schools')
     const sub = screen.getByTestId('hero-subtext').textContent ?? ''
     expect(sub.trim().split(/\s+/).length).toBeLessThanOrEqual(20)
-    expect(screen.getByTestId('cover-fan')).toBeInTheDocument()
   })
 
-  it('cover fan is visible in the server HTML (no opacity 0 before hydration)', () => {
-    const html = renderToString(<CoverFan books={[makeBook('One'), makeBook('Two'), makeBook('Three')]} />)
-    expect(html).toContain('One')
-    expect(html).not.toMatch(/opacity:\s*0(?![.\d])/)
-  })
-
-  it('hero renders with zero books (no cover fan, no crash)', () => {
-    render(<Hero books={[]} />)
-    expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
-    expect(screen.queryByTestId('cover-fan')).toBeNull()
-  })
 })
 
 describe('SubjectsRow', () => {

@@ -6,7 +6,9 @@ export type Book = {
   subtitle: string
   author: string
   slug: string
+  series: string
   subject: string
+  classLevel: string
   ageMin: number
   ageMax: number
   description: string
@@ -33,11 +35,16 @@ export const bookInputSchema = z
     subtitle: z.string().max(240, 'Use 240 characters or fewer.'),
     author: text('an author'),
     slug: z.string().max(120, 'Use 120 characters or fewer.').optional(),
+    series: text('a series'),
     subject: text('a subject'),
+    classLevel: text('a class'),
     ageMin: age,
     ageMax: age,
     description: z.string().max(2000, 'Use 2000 characters or fewer.'),
-    coverUrl: z.url({ protocol: /^https$/, error: 'Upload the cover again.' }).nullable(),
+    // An uploaded https URL, or a file shipped in public/ such as /Books/cover.jpg.
+    coverUrl: z
+      .union([z.url({ protocol: /^https$/ }), z.string().regex(/^\/[^/\\]/)], { error: 'Upload the cover again.' })
+      .nullable(),
     coverAlt: z.string().max(240, 'Use 240 characters or fewer.'),
     isbn: z.string().max(32, 'Use 32 characters or fewer.').optional(),
     pages: z.number('Enter a number of pages.').int('Use a whole number.').positive('Use a positive number.').optional(),

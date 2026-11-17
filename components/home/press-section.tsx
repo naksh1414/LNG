@@ -18,40 +18,47 @@ const principles = [
 
 export function PressSection() {
   return (
-    <section aria-labelledby="press-heading" className="mx-auto max-w-6xl px-5 pt-24 pb-20 md:pt-36 md:pb-28">
-      <Reveal>
-        <h2
-          id="press-heading"
-          className="max-w-[17ch] text-[2.4rem] leading-[1.02] font-extrabold tracking-[-0.04em] text-balance sm:text-6xl lg:text-[5.25rem]"
-        >
-          Children are not empty vessels. They arrive full of questions.
-        </h2>
-      </Reveal>
-      <div className="mt-12 max-w-[60ch] md:mt-16 md:ml-[33%]">
+    <section aria-labelledby="press-heading" className="bg-field">
+      <div className="mx-auto max-w-6xl px-5 py-12 md:py-20">
         <Reveal>
-          <p className="text-xl leading-relaxed md:text-2xl">
-            Learn and Grow is an independent press making Montessori books for curious children and the grown-ups
-            learning alongside them.
-          </p>
-          <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-            We believe a good book can open a door, then give a child the time to walk through it. Guided by
-            Montessori principles, we treat children as capable, active learners, and make books to return to at home
-            and in the classroom.
-          </p>
+          <h2
+            id="press-heading"
+            className="max-w-[20ch] text-[2.2rem] leading-[1.02] font-extrabold tracking-[-0.04em] text-balance sm:text-5xl lg:text-6xl"
+          >
+            Children are not empty vessels. They arrive full of questions.
+          </h2>
         </Reveal>
-        <ul className="mt-12 grid gap-6 border-t border-border pt-10">
-          {principles.map((p) => (
-            <li key={p.title} className="text-lg leading-relaxed text-muted-foreground">
-              <strong className="font-bold text-foreground">{p.title}</strong> {p.copy}
-            </li>
-          ))}
-        </ul>
-        <Link
-          href="/about"
-          className="mt-10 inline-block text-sm font-semibold underline underline-offset-4 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-        >
-          More about the press
-        </Link>
+        <div className="mt-10 grid gap-8 md:mt-14 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
+          <Reveal>
+            <p className="max-w-[44ch] text-xl leading-relaxed">
+              Learn and Grow is an independent press making Montessori books for curious children and the grown-ups
+              learning alongside them.
+            </p>
+            <p className="mt-5 max-w-[48ch] text-lg leading-relaxed text-muted-foreground">
+              We believe a good book can open a door, then give a child the time to walk through it. Guided by
+              Montessori principles, we treat children as capable, active learners, and make books to return to at home
+              and in the classroom.
+            </p>
+            <Link
+              href="/about"
+              className="mt-8 inline-flex items-center gap-2 rounded-full border border-foreground/30 px-6 py-3 text-sm font-semibold transition-colors hover:border-foreground hover:bg-foreground hover:text-background focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            >
+              More about the press
+            </Link>
+          </Reveal>
+          <ul className="grid gap-3">
+            {principles.map((p, i) => (
+              <li key={p.title}>
+                <Reveal delay={i * 0.08}>
+                  <div className="rounded-3xl bg-background p-6 text-lg leading-relaxed text-muted-foreground ring-1 ring-border">
+                    <strong className="block text-xl font-bold tracking-[-0.01em] text-foreground">{p.title}</strong>
+                    <span className="mt-1.5 block">{p.copy}</span>
+                  </div>
+                </Reveal>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </section>
   )

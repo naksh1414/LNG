@@ -1,13 +1,14 @@
 import type { Metadata } from 'next'
 import { cache } from 'react'
-import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
 import { notFound } from 'next/navigation'
+import { Breadcrumb } from '@/components/catalog/breadcrumb'
 import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
 import { BookCover } from '@/components/book-cover'
 import { EnquireButton } from '@/components/enquire-button'
 import { ageLabel } from '@/lib/books/format'
+import { seriesName } from '@/lib/books/hierarchy'
+import { slugify } from '@/lib/books/format'
 import { getPublishedBookBySlug as fetchBook } from '@/lib/books/repo'
 
 // Needs a live database, so it renders per request; the build must not require MONGODB_URI.
@@ -37,7 +38,9 @@ export default async function BookPage({ params }: Props) {
 
   const facts: [string, string | number | null | undefined][] = [
     ['Age', ageLabel(book.ageMin, book.ageMax)],
+    ['Series', book.series],
     ['Subject', book.subject],
+    ['Class', book.classLevel],
     ['Pages', book.pages],
     ['Language', book.language],
     ['ISBN', book.isbn],
@@ -47,16 +50,17 @@ export default async function BookPage({ params }: Props) {
     <>
       <SiteHeader />
       <main className="mx-auto max-w-6xl px-5 pt-10 pb-24 md:pt-14 md:pb-32">
-        <Link
-          href="/catalog"
-          className="group inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground underline-offset-4 hover:text-accent hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-        >
-          <ArrowLeft aria-hidden="true" className="size-4 transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:transition-none" />
-          All books
-        </Link>
+        <Breadcrumb
+          items={[
+            { label: 'Books', href: '/catalog' },
+            { label: seriesName(book), href: `/catalog/${slugify(seriesName(book))}` },
+            { label: book.subject, href: `/catalog/${slugify(seriesName(book))}/${slugify(book.subject)}` },
+            { label: book.title },
+          ]}
+        />
         <div className="mt-8 grid gap-12 md:mt-12 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:gap-16 lg:gap-24">
           <div className="mx-auto w-[78%] max-w-sm md:sticky md:top-28 md:w-full md:max-w-none md:self-start">
-            <div className="shadow-[0_30px_60px_-28px_rgba(35,44,54,0.55)]">
+            <div className="rounded-l-spine rounded-r-cover shadow-[0_30px_60px_-28px_rgba(27,34,54,0.55)]">
               <BookCover book={book} priority />
             </div>
           </div>

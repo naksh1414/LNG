@@ -41,7 +41,7 @@ describe('home sections', () => {
     const { container } = renderAll()
     expect(container.querySelector('section#schools')).not.toBeNull()
     expect(container.querySelector('section#contact')).not.toBeNull()
-    expect(screen.getByRole('link', { name: 'Ask about classroom orders' })).toHaveAttribute('href', '/#contact')
+    expect(screen.getByRole('link', { name: 'Ask about classroom orders' })).toHaveAttribute('href', '/contact')
   })
 
   it('page contains exactly one contact-intent action label', () => {
@@ -51,7 +51,7 @@ describe('home sections', () => {
       <>
         <SiteHeader />
         <main>
-          <Hero books={books} />
+          <Hero />
           <SubjectsRow subjects={['Nature', 'Language']} />
           <FeaturedBooks books={books} />
           <SchoolsSection />

@@ -1,6 +1,9 @@
+import { AudienceSection } from '@/components/home/audience-section'
 import { EnquirySection } from '@/components/home/enquiry-section'
 import { FeaturedBooks } from '@/components/home/featured-books'
 import { Hero } from '@/components/home/hero'
+import { LatestBooks } from '@/components/home/latest-books'
+import { NepSection } from '@/components/nep-section'
 import { PressSection } from '@/components/home/press-section'
 import { SchoolsSection } from '@/components/home/schools-section'
 import { SubjectsRow } from '@/components/home/subjects-row'
@@ -18,9 +21,12 @@ export default async function HomePage() {
     <>
       <SiteHeader />
       <main>
-        <Hero books={featured.slice(0, 3)} />
-        <SubjectsRow subjects={subjects} />
+        <Hero />
+        <AudienceSection />
         <FeaturedBooks books={featured} />
+        <SubjectsRow subjects={subjects} />
+        <NepSection />
+        <LatestBooks books={books} />
         <SchoolsSection />
         <PressSection />
         <EnquirySection />

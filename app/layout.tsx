@@ -1,10 +1,11 @@
 import { Analytics } from '@vercel/analytics/next'
-import { Figtree } from 'next/font/google'
+import { Bricolage_Grotesque, Figtree } from 'next/font/google'
 import type { Metadata, Viewport } from 'next'
 import { AnalyticsTracker } from '@/components/analytics-tracker'
 import './globals.css'
 
 const font = Figtree({ subsets: ['latin'], variable: '--font-figtree', display: 'swap' })
+const display = Bricolage_Grotesque({ subsets: ['latin'], variable: '--font-bricolage', display: 'swap' })
 
 export const metadata: Metadata = {
   title: { default: 'LEARN AND GROW - Books for curious minds', template: '%s | LEARN AND GROW' },
@@ -19,7 +20,7 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   colorScheme: 'light',
-  themeColor: '#f4f4f2',
+  themeColor: '#fbfaf7',
 }
 
 export default function RootLayout({
@@ -28,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={font.variable}>
+    <html lang="en" className={`${font.variable} ${display.variable}`}>
       <body className="antialiased">
         {children}
         <AnalyticsTracker />

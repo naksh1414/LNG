@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { Send } from 'lucide-react'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -15,7 +16,9 @@ type FieldName = 'name' | 'contact' | 'message'
 type Errors = Partial<Record<FieldName, string>>
 type Result = { saved: boolean; whatsapp: string | null; blocked: boolean }
 
-const errorClass = 'mt-1 text-sm text-destructive'
+const errorClass = 'mt-1.5 text-sm text-destructive'
+const fieldClass = 'rounded-xl'
+const labelClass = 'mb-2 block text-sm font-semibold'
 
 export function EnquiryForm({ book }: Props) {
   const [errors, setErrors] = useState<Errors>({})
@@ -84,7 +87,7 @@ export function EnquiryForm({ book }: Props) {
 
   if (result) {
     return (
-      <div ref={resultRef} tabIndex={-1} role="status" className="border border-border p-5 focus-visible:outline-2 focus-visible:outline-accent">
+      <div ref={resultRef} tabIndex={-1} role="status" className="rounded-md border border-border p-5 focus-visible:outline-2 focus-visible:outline-accent">
         <p className="font-semibold">
           {result.saved
             ? 'Your enquiry was saved. We will contact you.'
@@ -117,21 +120,21 @@ export function EnquiryForm({ book }: Props) {
   })
 
   return (
-    <form onSubmit={onSubmit} noValidate className="relative grid gap-5">
-      {book && <p className="text-sm text-muted-foreground">About: {book.title}</p>}
+    <form onSubmit={onSubmit} noValidate className="relative grid gap-5 sm:grid-cols-2">
+      {book && <p className="text-sm text-muted-foreground sm:col-span-2">About: {book.title}</p>}
       <div>
-        <Label htmlFor="enquiry-name" className="mb-1.5 block">Your name</Label>
-        <Input {...field('name')} autoComplete="name" maxLength={LIMITS.name.max} />
+        <Label htmlFor="enquiry-name" className={labelClass}>Your name</Label>
+        <Input {...field('name')} className={fieldClass} placeholder="Asha Rao" autoComplete="name" maxLength={LIMITS.name.max} />
         {errors.name && <p id="enquiry-name-error" className={errorClass}>{errors.name}</p>}
       </div>
       <div>
-        <Label htmlFor="enquiry-contact" className="mb-1.5 block">Phone or email</Label>
-        <Input {...field('contact')} autoComplete="email" maxLength={LIMITS.contact.max} />
+        <Label htmlFor="enquiry-contact" className={labelClass}>Phone or email</Label>
+        <Input {...field('contact')} className={fieldClass} placeholder="+91 98765 43210 or asha@example.com" autoComplete="email" maxLength={LIMITS.contact.max} />
         {errors.contact && <p id="enquiry-contact-error" className={errorClass}>{errors.contact}</p>}
       </div>
-      <div>
-        <Label htmlFor="enquiry-message" className="mb-1.5 block">Message</Label>
-        <Textarea {...field('message')} maxLength={LIMITS.message.max} />
+      <div className="sm:col-span-2">
+        <Label htmlFor="enquiry-message" className={labelClass}>Message</Label>
+        <Textarea {...field('message')} className={`${fieldClass} min-h-36`} placeholder="Tell us which book, class or age group you have in mind." maxLength={LIMITS.message.max} />
         {errors.message && <p id="enquiry-message-error" className={errorClass}>{errors.message}</p>}
       </div>
       {/* Honeypot: hidden from people and assistive tech; bots fill it. */}
@@ -142,12 +145,15 @@ export function EnquiryForm({ book }: Props) {
         </label>
       </div>
       {failed && (
-        <p ref={alertRef} tabIndex={-1} role="alert" className="text-sm font-medium text-destructive">
+        <p ref={alertRef} tabIndex={-1} role="alert" className="sm:col-span-2 text-sm font-medium text-destructive">
           We could not send your enquiry. Check your connection and try again.
         </p>
       )}
-      <div>
-        <Button type="submit" disabled={sending}>{sending ? 'Sending' : 'Send enquiry'}</Button>
+      <div className="sm:col-span-2">
+        <Button type="submit" disabled={sending} className="h-12 w-full rounded-xl text-base sm:w-auto sm:px-8">
+          {sending ? 'Sending' : 'Send enquiry'}
+          {!sending && <Send aria-hidden="true" />}
+        </Button>
       </div>
     </form>
   )

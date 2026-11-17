@@ -9,7 +9,7 @@ export function FeaturedBooks({ books }: { books: Book[] }) {
   if (books.length === 0) return null
   const [lead, ...rest] = books.slice(0, 4)
   return (
-    <section aria-labelledby="featured-heading" className="mx-auto max-w-6xl px-5 py-20 md:py-32">
+    <section aria-labelledby="featured-heading" className="mx-auto max-w-6xl px-5 py-12 md:py-16">
       <Reveal>
         <div className="grid gap-x-12 gap-y-14 lg:grid-cols-12">
           <div className="lg:col-span-7 lg:col-start-6 lg:row-start-1">
@@ -29,9 +29,9 @@ export function FeaturedBooks({ books }: { books: Book[] }) {
           <article className="lg:col-span-5 lg:col-start-1 lg:row-span-2 lg:row-start-1">
             <Link
               href={`/books/${lead.slug}`}
-              className="group block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+              className="group block rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
             >
-              <span className="block w-[82%] shadow-[0_30px_50px_-30px_rgba(35,44,54,0.6)] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-y-2 motion-reduce:transition-none motion-reduce:group-hover:translate-y-0 sm:w-[70%] lg:w-full">
+              <span className="block w-[82%] rounded-l-spine rounded-r-cover shadow-[0_30px_50px_-30px_rgba(27,34,54,0.6)] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-y-2 motion-reduce:transition-none motion-reduce:group-hover:translate-y-0 sm:w-[70%] lg:w-full">
                 <BookCover book={lead} index={0} decorative />
               </span>
               <span className="mt-6 block text-sm font-semibold text-muted-foreground">

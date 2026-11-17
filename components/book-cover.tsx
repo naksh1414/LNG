@@ -29,10 +29,11 @@ const spine = (behind = false) => (
 
 // decorative: the title is already text in the surrounding link, so the image gets empty alt.
 export function BookCover({ book, index = 0, className, priority, decorative }: Props) {
-  const frame = cn('relative block aspect-[3/4] w-full overflow-hidden', className)
+  const frame = cn('relative block aspect-[3/4] w-full overflow-hidden rounded-l-spine rounded-r-cover', className)
   if (book.coverUrl) {
     return (
-      <span className={cn(frame, 'bg-muted')}>
+      // Uploaded covers are near-square artwork, so the frame follows them instead of cropping to 3:4.
+      <span className={cn(frame, 'aspect-square bg-muted')}>
         <Image
           src={book.coverUrl}
           alt={decorative ? '' : book.coverAlt || `Cover of ${book.title}`}

@@ -6,6 +6,8 @@ export const makeBook = (title: string, subject = 'Nature', featured = true): Bo
   subtitle: `${title} subtitle`,
   author: 'Ada Reed',
   slug: title.toLowerCase().replace(/ /g, '-'),
+  series: 'Series',
+  classLevel: 'Class 1',
   subject,
   ageMin: 3,
   ageMax: 6,

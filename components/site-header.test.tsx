@@ -12,7 +12,7 @@ describe('SiteHeader', () => {
     expect(nav.getByRole('link', { name: 'Books' })).toHaveAttribute('href', '/catalog')
     expect(nav.getByRole('link', { name: 'About' })).toHaveAttribute('href', '/about')
     expect(nav.getByRole('link', { name: 'For schools' })).toHaveAttribute('href', '/#schools')
-    expect(nav.getByRole('link', { name: 'Contact' })).toHaveAttribute('href', '/#contact')
+    expect(nav.getByRole('link', { name: 'Contact' })).toHaveAttribute('href', '/contact')
   })
 
   it('menu toggle sets aria-expanded and shows links on small screens', async () => {

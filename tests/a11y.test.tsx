@@ -91,15 +91,14 @@ describe('performance markup', () => {
   it('home page html has no h-screen class', async () => {
     const { container } = await pages.home()
     expect(container.innerHTML).not.toMatch(/\bh-screen\b/)
-    expect(container.innerHTML).toContain('min-h-[100dvh]')
+    expect(container.innerHTML).toContain('100dvh')
   })
 
-  it('home: only the first cover is eager, every other image is lazy', async () => {
+  it('home: no cover is above the fold, so every image is lazy', async () => {
     const { container } = await pages.home()
-    const [first, ...rest] = [...container.querySelectorAll('img')]
-    expect(first.getAttribute('loading')).not.toBe('lazy')
-    expect(rest.length).toBeGreaterThan(0)
-    for (const img of rest) expect(img).toHaveAttribute('loading', 'lazy')
+    const imgs = [...container.querySelectorAll('img')]
+    expect(imgs.length).toBeGreaterThan(0)
+    for (const img of imgs) expect(img).toHaveAttribute('loading', 'lazy')
   })
 
   it('catalogue: every image is lazy', async () => {
@@ -109,7 +108,7 @@ describe('performance markup', () => {
 
   it('book page: the single cover is eager', async () => {
     const { container } = await pages.book()
-    const imgs = container.querySelectorAll('img')
+    const imgs = container.querySelectorAll('img:not([src*="logo"])')
     expect(imgs).toHaveLength(1)
     expect(imgs[0].getAttribute('loading')).not.toBe('lazy')
   })

@@ -36,7 +36,7 @@ const input: BookInput = {
   title: 'Seed to Tree',
   subtitle: 'A first nature book',
   author: 'A. Writer',
-  subject: 'Nature',
+  series: 'Series', classLevel: 'Class 1', subject: 'Nature',
   ageMin: 3,
   ageMax: 6,
   description: 'Watch a seed grow.',

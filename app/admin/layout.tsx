@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 
-const linkClass = 'block px-3 py-2 text-sm font-semibold text-foreground hover:bg-border/40 focus-visible:outline-2 focus-visible:outline-accent'
+const linkClass = 'block rounded-sm px-3 py-2 text-sm font-semibold text-foreground hover:bg-border/40 focus-visible:outline-2 focus-visible:outline-accent'
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   // Signed out means the login page (proxy.ts redirects every other admin page): no chrome.
@@ -32,7 +32,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               <Link href="/admin/enquiries" className={`${linkClass} flex items-center justify-between`}>
                 Enquiries
                 {!!unread && (
-                  <span className="bg-accent px-1.5 text-xs text-accent-foreground">
+                  <span className="rounded-sm bg-accent px-1.5 text-xs text-accent-foreground">
                     {unread}
                     <span className="sr-only"> unread</span>
                   </span>

@@ -13,7 +13,7 @@ export default async function LoginPage() {
     <div className="mx-auto flex min-h-[100dvh] max-w-sm flex-col justify-center px-4 py-12">
       <Wordmark />
       <h1 className="mt-10 text-2xl font-bold text-foreground">Sign in to the admin</h1>
-      <div className="mt-6 border border-border p-6">
+      <div className="mt-6 rounded-lg border border-border p-6">
         <LoginForm />
       </div>
     </div>

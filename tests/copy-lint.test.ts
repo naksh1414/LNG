@@ -59,12 +59,11 @@ describe('copy lint', () => {
   })
 
   it('only the first cover on a page is loaded eagerly', () => {
-    // Allowed: the front cover of the home fan and the single cover on a book page.
-    const allowed = ['components/home/cover-fan.tsx', 'app/books/[slug]/page.tsx', 'components/book-cover.tsx']
+    // Allowed: the single cover on a book page.
+    const allowed = ['app/books/[slug]/page.tsx', 'components/book-cover.tsx']
     const eager = offenders((t) => /\b(priority|preload)\b|loading=["']eager|fetchPriority/.test(t), sources).filter(
       (p) => !allowed.includes(p),
     )
     expect(eager).toEqual([])
-    expect(readFileSync(join(root, 'components/home/cover-fan.tsx'), 'utf8')).toMatch(/priority=\{i === 0\}/)
   })
 })

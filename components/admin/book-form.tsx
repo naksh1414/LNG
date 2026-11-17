@@ -14,7 +14,7 @@ import { MAX_COVER_BYTES } from '@/lib/uploads/validate'
 type Errors = Partial<Record<string, string>>
 
 const str = (v: string | number | undefined | null) => (v === undefined || v === null ? '' : String(v))
-const checkbox = 'size-4 accent-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
+const checkbox = 'size-4 rounded-[0.25rem] accent-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
 
 function Field({ id, label, hint, error, children }: { id: string; label: string; hint?: string; error?: string; children: ReactNode }) {
   return (
@@ -80,7 +80,9 @@ export function BookForm({ book }: { book?: Book }) {
       subtitle: value('subtitle'),
       author: value('author'),
       slug: optional('slug'),
+      series: value('series'),
       subject: value('subject'),
+      classLevel: value('classLevel'),
       ageMin: num('ageMin'),
       ageMax: num('ageMax'),
       description: value('description'),
@@ -122,7 +124,7 @@ export function BookForm({ book }: { book?: Book }) {
   return (
     <form ref={formRef} onSubmit={onSubmit} noValidate className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_18rem]">
       <div className="grid content-start gap-8">
-        <fieldset className="grid gap-5 border border-border bg-background p-6">
+        <fieldset className="grid gap-5 rounded-lg border border-border bg-background p-6">
           <legend className="px-2 text-xs font-semibold tracking-wide text-muted-foreground uppercase">Details</legend>
           <Field id="title" label="Title" error={errors.title}>
             <Input {...described('title', errors)} defaultValue={book?.title} required maxLength={120} />
@@ -130,6 +132,14 @@ export function BookForm({ book }: { book?: Book }) {
           <Field id="subtitle" label="Subtitle" error={errors.subtitle}>
             <Input {...described('subtitle', errors)} defaultValue={book?.subtitle} maxLength={240} />
           </Field>
+          <div className="grid gap-5 sm:grid-cols-2">
+            <Field id="series" label="Series" error={errors.series}>
+              <Input {...described('series', errors)} defaultValue={book?.series} required maxLength={120} />
+            </Field>
+            <Field id="classLevel" label="Class" error={errors.classLevel}>
+              <Input {...described('classLevel', errors)} defaultValue={book?.classLevel} placeholder="Nursery, LKG, Class 1" required maxLength={120} />
+            </Field>
+          </div>
           <div className="grid gap-5 sm:grid-cols-2">
             <Field id="author" label="Author" error={errors.author}>
               <Input {...described('author', errors)} defaultValue={book?.author} required maxLength={120} />
@@ -159,9 +169,9 @@ export function BookForm({ book }: { book?: Book }) {
           </Field>
         </fieldset>
 
-        <fieldset className="grid gap-5 border border-border bg-background p-6">
+        <fieldset className="grid gap-5 rounded-lg border border-border bg-background p-6">
           <legend className="px-2 text-xs font-semibold tracking-wide text-muted-foreground uppercase">Publishing details</legend>
-          <div className="grid gap-5 sm:grid-cols-3">
+          <div className="grid gap-5 sm:grid-cols-2">
             <Field id="isbn" label="ISBN (optional)" error={errors.isbn}>
               <Input {...described('isbn', errors)} defaultValue={book?.isbn} maxLength={32} />
             </Field>
@@ -176,9 +186,9 @@ export function BookForm({ book }: { book?: Book }) {
       </div>
 
       <div className="grid content-start gap-8">
-        <fieldset className="grid gap-4 border border-border bg-background p-6">
+        <fieldset className="grid gap-4 rounded-lg border border-border bg-background p-6">
           <legend className="px-2 text-xs font-semibold tracking-wide text-muted-foreground uppercase">Cover</legend>
-          <div className="relative aspect-[3/4] w-full overflow-hidden border border-border bg-tint">
+          <div className="relative aspect-[3/4] w-full overflow-hidden rounded-sm border border-border bg-tint">
             {coverUrl ? (
               // Plain img: the preview must show the uploaded file as is.
               <img src={coverUrl} alt="Cover preview" className="size-full object-cover" />
@@ -202,7 +212,7 @@ export function BookForm({ book }: { book?: Book }) {
               accept="image/jpeg,image/png,image/webp"
               onChange={onCoverChange}
               disabled={uploading}
-              className="block w-full text-sm text-muted-foreground file:mr-3 file:h-9 file:cursor-pointer file:border file:border-border file:bg-background file:px-3 file:font-semibold file:text-foreground hover:file:border-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              className="block w-full text-sm text-muted-foreground file:mr-3 file:h-9 file:cursor-pointer file:rounded-md file:border file:border-border file:bg-background file:px-3 file:font-semibold file:text-foreground hover:file:border-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             />
           </Field>
           {coverUrl && (
@@ -220,7 +230,7 @@ export function BookForm({ book }: { book?: Book }) {
           </Field>
         </fieldset>
 
-        <fieldset className="grid gap-3 border border-border bg-background p-6">
+        <fieldset className="grid gap-3 rounded-lg border border-border bg-background p-6">
           <legend className="px-2 text-xs font-semibold tracking-wide text-muted-foreground uppercase">Visibility</legend>
           <div className="flex items-start gap-3">
             <input id="published" name="published" type="checkbox" defaultChecked={book?.published ?? true} className={`${checkbox} mt-0.5`} />

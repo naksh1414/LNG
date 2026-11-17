@@ -9,7 +9,7 @@ const book: Book = {
   subtitle: 's',
   author: 'Ada Reed',
   slug: 'the-shape-of-a-seed',
-  subject: 'Nature',
+  series: 'Series', classLevel: 'Class 1', subject: 'Nature',
   ageMin: 4,
   ageMax: 8,
   description: 'd',

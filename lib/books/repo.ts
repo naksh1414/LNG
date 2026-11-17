@@ -10,7 +10,8 @@ async function books() {
 }
 
 function toBook({ _id, createdAt, updatedAt, ...rest }: WithId<BookDoc>): Book {
-  return { ...rest, id: _id.toHexString(), createdAt: createdAt.toISOString(), updatedAt: updatedAt.toISOString() }
+  // Books saved before series and classes existed have neither; the hierarchy files them under fallbacks.
+  return { ...rest, series: rest.series ?? '', classLevel: rest.classLevel ?? '', id: _id.toHexString(), createdAt: createdAt.toISOString(), updatedAt: updatedAt.toISOString() }
 }
 
 const oid = (id: string) => (ObjectId.isValid(id) ? new ObjectId(id) : null)

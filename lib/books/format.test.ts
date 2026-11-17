@@ -5,6 +5,7 @@ import { bookInputSchema } from './types'
 
 describe('ageLabel', () => {
   it('formats a range', () => expect(ageLabel(3, 6)).toBe('Ages 3 to 6'))
+  it('formats an open-ended range', () => expect(ageLabel(6, 18)).toBe('Ages 6+'))
   it('formats a single age', () => expect(ageLabel(4, 4)).toBe('Age 4'))
 })
 
