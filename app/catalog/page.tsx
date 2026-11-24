@@ -1,7 +1,36 @@
-import Link from 'next/link'
+import { CatalogHero } from '@/components/catalog/catalog-hero'
+import { SeriesCards } from '@/components/catalog/series-cards'
+import { listSeriesLogos } from '@/lib/series/repo'
+import { groupBySeries } from '@/lib/books/hierarchy'
+import { CatalogExtras } from '@/components/catalog/catalog-extras'
+import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
-import { BookCatalog } from '@/components/book-catalog'
+import { listPublishedBooks, listSubjects } from '@/lib/books/repo'
+import { CatalogClient } from './catalog-client'
 
-export default function CatalogPage() {
-  return <><SiteHeader /><main className="catalog-page"><BookCatalog /></main><footer className="site-footer"><Link href="/" className="wordmark"><span className="wordmark-mark" aria-hidden="true">LG</span><span>LEARN AND GROW<span className="wordmark-sub">PRESS · EST. 2012</span></span></Link><span>Books made with care, for the curious.</span><a href={process.env.NEXT_PUBLIC_CONTACT_EMAIL ? `mailto:${process.env.NEXT_PUBLIC_CONTACT_EMAIL}` : "/#contact"}>Say hello</a><small>© 2026 LEARN AND GROW</small></footer></>
+export const metadata = {
+  title: 'Catalogue',
+  description: 'Browse the Learn and Grow library of thoughtful books for curious children.',
+}
+
+// Needs a live database, so it renders per request; the build must not require MONGODB_URI.
+export const dynamic = 'force-dynamic'
+
+export default async function CatalogPage({ searchParams }: { searchParams: Promise<{ subject?: string | string[] }> }) {
+  const { subject } = await searchParams
+  const initial = typeof subject === 'string' ? subject : undefined
+  const [books, subjects, logos] = await Promise.all([listPublishedBooks(), listSubjects(), listSeriesLogos()])
+  return (
+    <>
+      <SiteHeader />
+      <main>
+        <CatalogHero books={books} />
+        <SeriesCards series={groupBySeries(books)} logos={logos} />
+        {/* key resets the chip when only the query string changes */}
+        <CatalogClient key={initial} books={books} subjects={subjects} initialSubject={initial} />
+        <CatalogExtras />
+      </main>
+      <SiteFooter />
+    </>
+  )
 }
