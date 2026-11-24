@@ -8,7 +8,7 @@ import { readSessionToken, SESSION_COOKIE } from '@/lib/auth/session'
 export const metadata: Metadata = { title: 'Sign in' }
 
 export default async function LoginPage() {
-  if (await readSessionToken((await cookies()).get(SESSION_COOKIE)?.value)) redirect('/admin/books')
+  if (await readSessionToken((await cookies()).get(SESSION_COOKIE)?.value)) redirect('/admin/series')
   return (
     <div className="mx-auto flex min-h-[100dvh] max-w-sm flex-col justify-center px-4 py-12">
       <Wordmark />

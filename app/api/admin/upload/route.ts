@@ -1,7 +1,10 @@
 import { randomUUID } from 'node:crypto'
+import { mkdir, writeFile } from 'node:fs/promises'
+import path from 'node:path'
 import { put } from '@vercel/blob'
 import { requireAdmin } from '@/lib/auth/require-admin'
 import { isCrossOrigin } from '@/lib/request'
+import { UPLOAD_DIR } from '@/lib/uploads/dir'
 import { CONTENT_TYPE, MAX_COVER_BYTES, validateCover } from '@/lib/uploads/validate'
 
 // shortcut: Vercel caps function request bodies at 4.5 MB, so covers above that fail on Vercel before this runs;
@@ -12,7 +15,9 @@ export async function POST(request: Request): Promise<Response> {
   if (isCrossOrigin(request)) return Response.json({ error: 'Cross-origin request refused.' }, { status: 403 })
 
   const token = process.env.BLOB_READ_WRITE_TOKEN
-  if (!token) {
+  // Without a blob token, files go to the disk folder in UPLOAD_DIR (a mounted volume when self-hosting) or, in `next dev`, public/uploads.
+  const local = !token && (process.env.NODE_ENV === 'development' || !!process.env.UPLOAD_DIR)
+  if (!token && !local) {
     console.error('admin upload: BLOB_READ_WRITE_TOKEN is not set')
     return Response.json(
       { error: 'Cover uploads are not set up: BLOB_READ_WRITE_TOKEN is missing on the server.' },
@@ -37,13 +42,20 @@ export async function POST(request: Request): Promise<Response> {
   const result = validateCover({ type: file.type, size: file.size, name: file.name, bytes })
   if (!result.ok) return Response.json({ error: result.error }, { status: 400 })
 
+  if (local) {
+    const name = `${randomUUID()}.${result.ext}`
+    await mkdir(UPLOAD_DIR(), { recursive: true })
+    await writeFile(path.join(UPLOAD_DIR(), name), bytes)
+    return Response.json({ url: `/uploads/${name}` })
+  }
+
   try {
     // Server-chosen name: the client filename never reaches the storage path.
     const blob = await put(`covers/${randomUUID()}.${result.ext}`, Buffer.from(bytes), {
       access: 'public',
       contentType: CONTENT_TYPE[result.ext],
       addRandomSuffix: false,
-      token,
+      token: token!,
     })
     return Response.json({ url: blob.url })
   } catch (err) {

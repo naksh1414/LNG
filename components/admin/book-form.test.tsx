@@ -68,7 +68,7 @@ describe('BookForm', () => {
     render(<BookForm book={book} />)
     expect(screen.getByLabelText('Title')).toHaveValue('Sky Book')
     await user.click(screen.getByRole('button', { name: 'Save changes' }))
-    await waitFor(() => expect(router.push).toHaveBeenCalledWith('/admin/books'))
+    await waitFor(() => expect(router.push).toHaveBeenCalledWith('/admin/series'))
     expect(fetchMock.mock.calls[0][0]).toBe(`/api/admin/books/${book.id}`)
     expect(fetchMock.mock.calls[0][1].method).toBe('PATCH')
   })
@@ -135,5 +135,16 @@ describe('admin books a11y', () => {
       expect(el, el.outerHTML.slice(0, 160)).toHaveAccessibleName()
       expect(el.className, el.outerHTML.slice(0, 120)).toMatch(/focus-visible:outline-(2|\[)/)
     }
+  })
+})
+
+describe('BookForm slug', () => {
+  it('fills the slug from the title and cannot be edited', async () => {
+    render(<BookForm />)
+    const user = userEvent.setup()
+    await user.type(screen.getByLabelText('Title'), 'Seed to Tree')
+    const slug = screen.getByLabelText('Slug')
+    expect(slug).toHaveValue('seed-to-tree')
+    expect(slug).toHaveAttribute('readonly')
   })
 })

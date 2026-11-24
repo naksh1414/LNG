@@ -22,6 +22,7 @@ vi.mock('@/lib/books/repo', () => ({
   getPublishedBookBySlug: vi.fn(async (slug: string) => books.find((b) => b.slug === slug) ?? null),
 }))
 
+vi.mock('@/lib/series/repo', () => ({ listSeriesLogos: vi.fn(async () => ({})) }))
 
 beforeEach(() => {
   vi.stubGlobal(

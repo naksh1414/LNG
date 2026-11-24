@@ -22,7 +22,7 @@ export function LoginForm() {
       })
       if (res.ok) {
         // Full navigation so the admin layout renders with the new session.
-        window.location.assign('/admin/books')
+        window.location.assign('/admin/series')
         return
       }
       setError((await res.json().catch(() => null))?.error ?? 'Could not sign in. Try again.')

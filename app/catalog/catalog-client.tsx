@@ -38,7 +38,7 @@ export function CatalogClient({
   }
 
   return (
-    <section aria-label="Browse our books">
+    <section id="all-books" aria-label="Browse our books" className="scroll-mt-16">
       <div className="sticky top-16 z-30 border-b border-border bg-background/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl flex-col gap-3 px-5 py-4 md:flex-row md:items-center md:justify-between">
           <div role="group" aria-label="Filter by subject" className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] md:flex-wrap md:overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden">

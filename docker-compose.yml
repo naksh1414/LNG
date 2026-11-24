@@ -1,0 +1,56 @@
+# Usage: cp .env.example .env, fill it in, then `docker compose up -d --build`.
+# First admin: docker compose --profile tools run --rm tools pnpm seed-admin
+services:
+  web:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_WHATSAPP_NUMBER: ${NEXT_PUBLIC_WHATSAPP_NUMBER:-}
+        NEXT_PUBLIC_CONTACT_EMAIL: ${NEXT_PUBLIC_CONTACT_EMAIL:-}
+    restart: unless-stopped
+    ports:
+      - '${PORT:-3000}:3000'
+    environment:
+      MONGODB_URI: mongodb://${MONGO_USER:?set MONGO_USER}:${MONGO_PASSWORD:?set MONGO_PASSWORD}@mongo:27017/?authSource=admin
+      MONGODB_DB: ${MONGODB_DB:-lng}
+      SESSION_SECRET: ${SESSION_SECRET:?set SESSION_SECRET (openssl rand -base64 32)}
+      BLOB_READ_WRITE_TOKEN: ${BLOB_READ_WRITE_TOKEN:-}
+    volumes:
+      - uploads:/data/uploads
+    depends_on:
+      mongo:
+        condition: service_healthy
+    read_only: true
+    tmpfs: [/tmp, /app/.next/cache]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ['CMD', 'mongosh', '--quiet', '--eval', "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    # No published ports: only reachable from the web service.
+
+  tools:
+    profiles: [tools]
+    build: { context: ., target: tools }
+    environment:
+      MONGODB_URI: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongo:27017/?authSource=admin
+      MONGODB_DB: ${MONGODB_DB:-lng}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+    depends_on:
+      mongo: { condition: service_healthy }
+
+volumes:
+  mongo-data:
+  uploads:

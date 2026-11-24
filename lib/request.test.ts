@@ -35,4 +35,11 @@ describe('isCrossOrigin', () => {
     expect(isCrossOrigin(req('https://lng.example.evil.example'))).toBe(true)
     expect(isCrossOrigin(req('null'))).toBe(true)
   })
+
+  it('uses the Host the client sent when the internal URL differs', () => {
+    const r = new Request('http://0.0.0.0:3000/api/admin/books', { headers: { origin: 'https://lng.example', 'x-forwarded-host': 'lng.example' } })
+    expect(isCrossOrigin(r)).toBe(false)
+    const evil = new Request('http://0.0.0.0:3000/x', { headers: { origin: 'https://evil.example', 'x-forwarded-host': 'lng.example' } })
+    expect(isCrossOrigin(evil)).toBe(true)
+  })
 })

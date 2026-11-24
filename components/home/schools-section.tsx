@@ -40,7 +40,7 @@ export function SchoolsSection() {
             <p className="mt-5 max-w-[36ch] text-lg text-foreground/75">
               Schools and teachers can order our books in sets for classrooms and libraries.
             </p>
-            <Link href={contactHref} className={cn(buttonVariants(), 'mt-10 h-12 self-start px-7 text-base lg:mt-auto')}>
+            <Link href={contactHref} className={cn(buttonVariants(), 'mt-10 h-auto min-h-12 self-start px-7 py-3 text-base whitespace-normal lg:mt-auto')}>
               Ask about classroom orders
             </Link>
           </div>

@@ -15,7 +15,9 @@ export function isCrossOrigin(request: Request): boolean {
   const origin = request.headers.get('origin')
   if (!origin) return false
   try {
-    return new URL(origin).host !== new URL(request.url).host
+    // Behind a proxy or in a container, request.url carries the internal bind address, so prefer the host the client used.
+    const host = request.headers.get('x-forwarded-host') ?? request.headers.get('host') ?? new URL(request.url).host
+    return new URL(origin).host !== host
   } catch {
     return true
   }

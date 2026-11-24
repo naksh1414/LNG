@@ -8,6 +8,7 @@ import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { slugify } from '@/lib/books/format'
 import type { Book } from '@/lib/books/types'
 import { MAX_COVER_BYTES } from '@/lib/uploads/validate'
 
@@ -35,13 +36,16 @@ const described = (id: string, errors: Errors, hint = false) => ({
   'aria-describedby': [hint && `${id}-hint`, errors[id] && `${id}-error`].filter(Boolean).join(' ') || undefined,
 })
 
-export function BookForm({ book }: { book?: Book }) {
+// series locks the series field: books are added from inside their series. Without it the field is free text.
+export function BookForm({ book, series, backHref = '/admin/series' }: { book?: Book; series?: string; backHref?: string }) {
   const router = useRouter()
   const formRef = useRef<HTMLFormElement>(null)
   const [coverUrl, setCoverUrl] = useState<string | null>(book?.coverUrl ?? null)
   const [uploading, setUploading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [errors, setErrors] = useState<Errors>({})
+  // The slug is read-only: a new book's follows the title, an existing book keeps its address.
+  const [slug, setSlug] = useState(book?.slug ?? '')
   const [formError, setFormError] = useState<string | null>(null)
 
   async function onCoverChange(event: ChangeEvent<HTMLInputElement>) {
@@ -104,7 +108,7 @@ export function BookForm({ book }: { book?: Book }) {
         body: JSON.stringify(payload),
       })
       if (res.ok) {
-        router.push('/admin/books')
+        router.push(backHref)
         router.refresh()
         return
       }
@@ -127,14 +131,28 @@ export function BookForm({ book }: { book?: Book }) {
         <fieldset className="grid gap-5 rounded-lg border border-border bg-background p-6">
           <legend className="px-2 text-xs font-semibold tracking-wide text-muted-foreground uppercase">Details</legend>
           <Field id="title" label="Title" error={errors.title}>
-            <Input {...described('title', errors)} defaultValue={book?.title} required maxLength={120} />
+            <Input
+              {...described('title', errors)}
+              defaultValue={book?.title}
+              required
+              maxLength={120}
+              onChange={(e) => {
+                if (!book) setSlug(e.target.value.trim() ? slugify(e.target.value) : '')
+              }}
+            />
           </Field>
           <Field id="subtitle" label="Subtitle" error={errors.subtitle}>
             <Input {...described('subtitle', errors)} defaultValue={book?.subtitle} maxLength={240} />
           </Field>
           <div className="grid gap-5 sm:grid-cols-2">
             <Field id="series" label="Series" error={errors.series}>
-              <Input {...described('series', errors)} defaultValue={book?.series} required maxLength={120} />
+              <Input
+                {...described('series', errors)}
+                defaultValue={series ?? book?.series}
+                readOnly={Boolean(series)}
+                required
+                maxLength={120}
+              />
             </Field>
             <Field id="classLevel" label="Class" error={errors.classLevel}>
               <Input {...described('classLevel', errors)} defaultValue={book?.classLevel} placeholder="Nursery, LKG, Class 1" required maxLength={120} />
@@ -151,10 +169,16 @@ export function BookForm({ book }: { book?: Book }) {
           <Field
             id="slug"
             label="Slug"
-            hint="The web address: /books/your-slug. Leave blank to make one from the title. Set it by hand for titles not written in English letters."
+            hint="The web address: /books/your-slug. Made from the title as you type. It cannot be edited, so links to the book never break."
             error={errors.slug}
           >
-            <Input {...described('slug', errors, true)} defaultValue={book?.slug} maxLength={120} spellCheck={false} />
+            <Input
+              {...described('slug', errors, true)}
+              value={slug}
+              readOnly
+              maxLength={120}
+              spellCheck={false}
+            />
           </Field>
           <div className="grid gap-5 sm:grid-cols-2">
             <Field id="ageMin" label="Youngest age" error={errors.ageMin}>
@@ -256,7 +280,7 @@ export function BookForm({ book }: { book?: Book }) {
         <Button type="submit" disabled={saving || uploading}>
           {saving ? 'Saving' : book ? 'Save changes' : 'Create book'}
         </Button>
-        <Link href="/admin/books" className={buttonVariants({ variant: 'quiet' })}>Cancel</Link>
+        <Link href={backHref} className={buttonVariants({ variant: 'quiet' })}>Cancel</Link>
       </div>
     </form>
   )

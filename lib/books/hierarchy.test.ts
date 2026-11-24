@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { makeBook } from '@/components/home/fixtures'
-import { classRank, groupByClass, groupBySeries } from './hierarchy'
+import { classRank, groupByClass, groupBySeries, spreadAcrossSeries } from './hierarchy'
 
 const b = (title: string, series: string, subject: string, classLevel: string) => ({ ...makeBook(title), series, subject, classLevel })
 
@@ -28,5 +28,10 @@ describe('book hierarchy', () => {
   it('files books with no series or class under fallbacks', () => {
     expect(groupBySeries([b('Old', '', 'Art', '')])[0].name).toBe('More books')
     expect(groupByClass([b('Old', '', 'Art', '')])[0].level).toBe('All classes')
+  })
+
+  it('spreads a short list across series instead of one series filling it', () => {
+    const list = [b('A1', 'A', 'x', ''), b('A2', 'A', 'x', ''), b('A3', 'A', 'x', ''), b('B1', 'B', 'x', ''), b('C1', 'C', 'x', '')]
+    expect(spreadAcrossSeries(list).map((x) => x.title)).toEqual(['A1', 'B1', 'C1', 'A2', 'A3'])
   })
 })

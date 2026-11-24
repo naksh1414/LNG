@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { findAdminByEmail } from '@/lib/auth/admins-repo'
 import { DUMMY_HASH, verifyPassword } from '@/lib/auth/password'
 import { createSessionToken, SESSION_COOKIE, sessionCookieOptions } from '@/lib/auth/session'
+import { audit } from '@/lib/audit/log'
 import { hit } from '@/lib/rate-limit'
 import { clientIp } from '@/lib/request'
 
@@ -37,7 +38,11 @@ export async function POST(request: Request): Promise<Response> {
   try {
     const admin = await findAdminByEmail(email)
     const ok = await verifyPassword(password, admin?.passwordHash ?? DUMMY_HASH)
-    if (!admin || !ok) return Response.json({ error: 'Wrong email or password.' }, { status: 401 })
+    if (!admin || !ok) {
+      await audit(request, { adminId: admin?.id ?? null, email }, 'login_failed')
+      return Response.json({ error: 'Wrong email or password.' }, { status: 401 })
+    }
+    await audit(request, { adminId: admin.id, email: admin.email }, 'login_success')
 
     const res = NextResponse.json({ ok: true })
     res.cookies.set(SESSION_COOKIE, await createSessionToken(admin.id), sessionCookieOptions)

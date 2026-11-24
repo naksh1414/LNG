@@ -9,6 +9,7 @@ import { SchoolsSection } from '@/components/home/schools-section'
 import { SubjectsRow } from '@/components/home/subjects-row'
 import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
+import { spreadAcrossSeries } from '@/lib/books/hierarchy'
 import { listPublishedBooks, listSubjects } from '@/lib/books/repo'
 
 // Needs a live database, so it renders per request; the build must not require MONGODB_URI.
@@ -16,7 +17,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
   const [books, subjects] = await Promise.all([listPublishedBooks(), listSubjects()])
-  const featured = books.filter((b) => b.featured)
+  const featured = spreadAcrossSeries(books.filter((b) => b.featured))
   return (
     <>
       <SiteHeader />

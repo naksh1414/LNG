@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { findAdminById, setPasswordHash } from '@/lib/auth/admins-repo'
 import { hashPassword, passwordPolicy, verifyPassword } from '@/lib/auth/password'
+import { audit } from '@/lib/audit/log'
 import { requireAdmin } from '@/lib/auth/require-admin'
 import { hit } from '@/lib/rate-limit'
 
@@ -43,6 +44,7 @@ export async function POST(request: Request): Promise<Response> {
     const policyError = passwordPolicy(newPassword)
     if (policyError) return Response.json({ error: policyError }, { status: 400 })
     await setPasswordHash(admin.id, await hashPassword(newPassword))
+    await audit(request, auth, 'password_changed')
     return Response.json({ ok: true })
   } catch (err) {
     console.error('admin password: failed:', err instanceof Error ? err.message : 'unknown error')

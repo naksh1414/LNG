@@ -39,6 +39,7 @@ export function SiteHeader() {
                 key={item.href}
                 href={item.href}
                 onClick={() => setOpen(false)}
+                {...(item.external && { target: '_blank', rel: 'noopener noreferrer' })}
                 aria-current={current(item.href) ? 'page' : undefined}
                 className="group relative py-3 text-base font-medium whitespace-nowrap text-foreground transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent aria-[current=page]:font-semibold aria-[current=page]:text-accent max-md:border-b max-md:border-border max-md:last:border-0 md:py-6 md:text-sm"
               >

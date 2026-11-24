@@ -1,6 +1,7 @@
+import { audit } from '@/lib/audit/log'
 import { requireAdmin } from '@/lib/auth/require-admin'
 import { forbidden, isDuplicateSlug, parseBookBody, revalidateBooks, serverError, slugTaken } from '@/lib/books/admin-api'
-import { deleteBook, updateBook } from '@/lib/books/repo'
+import { deleteBook, getBookById, updateBook } from '@/lib/books/repo'
 import { isCrossOrigin } from '@/lib/request'
 
 type Ctx = { params: Promise<{ id: string }> }
@@ -15,6 +16,7 @@ export async function PATCH(request: Request, { params }: Ctx): Promise<Response
   try {
     const book = await updateBook((await params).id, input)
     if (!book) return notFound()
+    await audit(request, auth, 'book_updated', { type: 'book', id: book.id, label: `${book.title} (${book.series})` })
     revalidateBooks()
     return Response.json({ book })
   } catch (err) {
@@ -29,7 +31,10 @@ export async function DELETE(request: Request, { params }: Ctx): Promise<Respons
   if (auth instanceof Response) return auth
   if (isCrossOrigin(request)) return forbidden()
   try {
-    if (!(await deleteBook((await params).id))) return notFound()
+    const { id } = await params
+    const book = await getBookById(id)
+    if (!(await deleteBook(id))) return notFound()
+    await audit(request, auth, 'book_deleted', { type: 'book', id, label: book ? `${book.title} (${book.series})` : undefined })
     revalidateBooks()
     return Response.json({ ok: true })
   } catch (err) {

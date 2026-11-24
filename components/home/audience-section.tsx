@@ -48,7 +48,7 @@ export function AudienceSection() {
             <Link
               href={a.href}
               className={cn(
-                'group flex h-full min-h-72 flex-col rounded-3xl p-7 transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent',
+                'group flex h-full min-h-52 flex-col rounded-3xl p-7 md:min-h-72 transition-[background-color,transform] duration-300 hover:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent',
                 a.tone,
               )}
             >

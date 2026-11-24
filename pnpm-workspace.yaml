@@ -7,3 +7,6 @@ minimumReleaseAgeExclude:
 allowBuilds:
   esbuild: true
   mongodb-memory-server: false
+
+overrides:
+  'zod@<4.6.6': '4.6.7'

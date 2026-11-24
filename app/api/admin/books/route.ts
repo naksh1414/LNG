@@ -1,3 +1,4 @@
+import { audit } from '@/lib/audit/log'
 import { requireAdmin } from '@/lib/auth/require-admin'
 import { forbidden, parseBookBody, revalidateBooks, serverError } from '@/lib/books/admin-api'
 import { createBook, listAllBooks } from '@/lib/books/repo'
@@ -22,6 +23,7 @@ export async function POST(request: Request): Promise<Response> {
   try {
     // createBook retries on a duplicate slug and suffixes it (-2, -3), so no 409 here.
     const book = await createBook(input)
+    await audit(request, auth, 'book_created', { type: 'book', id: book.id, label: `${book.title} (${book.series})` })
     revalidateBooks()
     return Response.json({ book }, { status: 201 })
   } catch (err) {

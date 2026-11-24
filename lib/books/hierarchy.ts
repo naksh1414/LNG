@@ -19,7 +19,7 @@ export function classRank(level: string): number {
   const l = level.trim().toLowerCase()
   const pre = ['playgroup', 'pre-nursery', 'nursery', 'lkg', 'ukg'].indexOf(l)
   if (pre >= 0) return pre
-  const n = /^class\s+(\d+)$/.exec(l)
+  const n = /^(?:class\s+)?(\d+)$/.exec(l)
   return n ? 10 + Number(n[1]) : 1000
 }
 
@@ -55,5 +55,14 @@ export function groupByClass(books: Book[]): { level: string; books: Book[] }[] 
     if (last?.level === level) last.books.push(b)
     else out.push({ level, books: [b] })
   }
+  return out
+}
+
+// Takes one book from each series in turn, so a short list (like "current favourites") shows every series
+// instead of the oldest series filling every slot.
+export function spreadAcrossSeries(books: Book[]): Book[] {
+  const queues = groupBySeries(books).map((s) => [...s.books])
+  const out: Book[] = []
+  while (queues.some((q) => q.length)) for (const q of queues) if (q.length) out.push(q.shift()!)
   return out
 }

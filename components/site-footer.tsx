@@ -11,7 +11,7 @@ export function SiteFooter() {
   return (
     <footer className="mt-8 bg-field">
       {/* The logo's four colours as a thin top edge. */}
-      <div aria-hidden="true" className="h-1 bg-gradient-to-r from-[#eb2891] via-[#fdcc2d] to-[#2d5ba6]" />
+      <div aria-hidden="true" className="drift h-1 bg-gradient-to-r from-[#eb2891] via-[#fdcc2d] to-[#2d5ba6]" />
       <div className="mx-auto grid max-w-6xl gap-10 px-5 pt-14 pb-8 md:grid-cols-[minmax(0,6fr)_minmax(0,3fr)_minmax(0,3fr)] md:pt-16">
         <div>
           <Wordmark />
@@ -22,7 +22,7 @@ export function SiteFooter() {
         <nav aria-label="Footer" className="grid content-start gap-3">
           <p className="font-semibold">Explore</p>
           {site.nav.map((item) => (
-            <Link key={item.href} href={item.href} className={link}>
+            <Link key={item.href} href={item.href} className={link} {...(item.external && { target: '_blank', rel: 'noopener noreferrer' })}>
               {item.label}
             </Link>
           ))}

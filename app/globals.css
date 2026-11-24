@@ -121,14 +121,46 @@
   }
 }
 
-/* Gentle float for the hero shapes; off under reduced motion. */
+/* Motion, all off under reduced motion. --d sets each element's start delay.
+   rise/pop: page-load entrances (CSS only, so the server HTML is complete); bob: gentle float;
+   drift: slow background gradient sway. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.9);
+  }
+}
 @keyframes bob {
   50% {
     translate: 0 -10px;
   }
 }
+@keyframes drift {
+  to {
+    background-position: 100% 50%;
+  }
+}
 @media (prefers-reduced-motion: no-preference) {
+  .anim-rise {
+    animation: rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: var(--d, 0ms);
+  }
+  .anim-pop {
+    animation: pop 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: var(--d, 0ms);
+  }
   .bob {
-    animation: bob 5s ease-in-out infinite;
+    animation: bob 6s ease-in-out infinite;
+    animation-delay: var(--d, 0s);
+  }
+  .drift {
+    background-size: 200% 200%;
+    animation: drift 16s ease-in-out infinite alternate;
   }
 }

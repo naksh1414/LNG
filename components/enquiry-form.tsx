@@ -129,7 +129,7 @@ export function EnquiryForm({ book }: Props) {
       </div>
       <div>
         <Label htmlFor="enquiry-contact" className={labelClass}>Phone or email</Label>
-        <Input {...field('contact')} className={fieldClass} placeholder="+91 98765 43210 or asha@example.com" autoComplete="email" maxLength={LIMITS.contact.max} />
+        <Input {...field('contact')} className={fieldClass} placeholder="Phone number or email" autoComplete="email" maxLength={LIMITS.contact.max} />
         {errors.contact && <p id="enquiry-contact-error" className={errorClass}>{errors.contact}</p>}
       </div>
       <div className="sm:col-span-2">

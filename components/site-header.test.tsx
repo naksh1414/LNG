@@ -9,7 +9,7 @@ describe('SiteHeader', () => {
     const navs = screen.getAllByRole('navigation')
     expect(navs).toHaveLength(1)
     const nav = within(navs[0])
-    expect(nav.getByRole('link', { name: 'Books' })).toHaveAttribute('href', '/catalog')
+    expect(nav.getByRole('link', { name: 'Catalogue' })).toHaveAttribute('href', '/catalog')
     expect(nav.getByRole('link', { name: 'About' })).toHaveAttribute('href', '/about')
     expect(nav.getByRole('link', { name: 'For schools' })).toHaveAttribute('href', '/#schools')
     expect(nav.getByRole('link', { name: 'Contact' })).toHaveAttribute('href', '/contact')

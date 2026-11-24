@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowUpRight } from 'lucide-react'
 import { BookCover } from '@/components/book-cover'
@@ -5,10 +6,11 @@ import { Reveal } from '@/components/reveal'
 import { ageLabel } from '@/lib/books/format'
 import type { SeriesGroup } from '@/lib/books/hierarchy'
 
-export function SeriesCards({ series }: { series: SeriesGroup[] }) {
+// logos maps a series slug to its brand logo; a series without one shows covers instead.
+export function SeriesCards({ series, logos = {} }: { series: SeriesGroup[]; logos?: Record<string, string> }) {
   if (series.length === 0) return null
   return (
-    <section aria-labelledby="series-heading" className="mx-auto max-w-6xl px-5 py-12 md:py-16">
+    <section aria-labelledby="series-heading" className="mx-auto scroll-mt-16 max-w-6xl px-5 py-12 md:py-16">
       <Reveal>
         <h2 id="series-heading" className="text-4xl font-bold tracking-[-0.03em] text-balance md:text-5xl">
           Start with a series
@@ -24,15 +26,21 @@ export function SeriesCards({ series }: { series: SeriesGroup[] }) {
             <li key={s.slug}>
               <Link
                 href={`/catalog/${s.slug}`}
-                className="group flex h-full flex-col gap-6 rounded-3xl border border-border bg-field p-6 transition-shadow hover:shadow-[0_20px_40px_-24px_rgba(27,34,54,0.45)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent sm:flex-row sm:items-center"
+                className="group flex h-full flex-col gap-6 rounded-3xl border border-border bg-field p-6 transition-[box-shadow,transform] duration-300 hover:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:translate-y-0 hover:shadow-[0_20px_40px_-24px_rgba(27,34,54,0.45)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent sm:flex-row sm:items-center"
               >
-                <span aria-hidden="true" className="flex shrink-0 -space-x-8">
-                  {covers.map((b, i) => (
-                    <span key={b.id} className="w-24 rounded-2xl shadow-[0_14px_24px_-14px_rgba(27,34,54,0.6)] sm:w-28" style={{ zIndex: 3 - i }}>
-                      <BookCover book={b} index={i} className="rounded-2xl" decorative />
-                    </span>
-                  ))}
-                </span>
+                {logos[s.slug] ? (
+                  <span aria-hidden="true" className="relative block h-24 w-full shrink-0 sm:w-44">
+                    <Image src={logos[s.slug]} alt="" fill sizes="176px" className="object-contain object-left" />
+                  </span>
+                ) : (
+                  <span aria-hidden="true" className="flex shrink-0 -space-x-8">
+                    {covers.map((b, i) => (
+                      <span key={b.id} className="w-24 rounded-2xl shadow-[0_14px_24px_-14px_rgba(27,34,54,0.6)] sm:w-28" style={{ zIndex: 3 - i }}>
+                        <BookCover book={b} index={i} className="rounded-2xl" decorative />
+                      </span>
+                    ))}
+                  </span>
+                )}
                 <span className="flex-1">
                   <span className="flex items-center justify-between gap-4 text-2xl font-bold tracking-[-0.02em] group-hover:text-accent">
                     {s.name}
