@@ -13,8 +13,7 @@ export const site = {
   nav: <NavItem[]>[
     { label: 'Catalogue', href: '/catalog' },
     { label: 'About', href: '/about' },
-    { label: 'For schools', href: '/#schools' },
+    { label: 'For schools', href: 'https://econtent.learnngrow.co.in/tg/', external: true },
     { label: 'Contact', href: '/contact' },
-    { label: 'E-content', href: 'https://econtent.learnngrow.co.in/tg/', external: true },
   ],
 }

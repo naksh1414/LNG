@@ -11,7 +11,7 @@ describe('SiteHeader', () => {
     const nav = within(navs[0])
     expect(nav.getByRole('link', { name: 'Catalogue' })).toHaveAttribute('href', '/catalog')
     expect(nav.getByRole('link', { name: 'About' })).toHaveAttribute('href', '/about')
-    expect(nav.getByRole('link', { name: 'For schools' })).toHaveAttribute('href', '/#schools')
+    expect(nav.getByRole('link', { name: 'For schools' })).toHaveAttribute('href', 'https://econtent.learnngrow.co.in/tg/')
     expect(nav.getByRole('link', { name: 'Contact' })).toHaveAttribute('href', '/contact')
   })
 
