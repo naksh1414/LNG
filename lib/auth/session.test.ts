@@ -3,7 +3,7 @@ import { SignJWT } from 'jose'
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 import { createSessionToken, readSessionToken, SESSION_COOKIE } from './session'
 
-const SECRET = 'test-secret-that-is-at-least-32-characters-long'
+const SECRET = 't'.repeat(40)
 
 beforeAll(() => {
   process.env.SESSION_SECRET = SECRET
@@ -33,7 +33,7 @@ describe('session', () => {
 
     // Signed with another secret.
     const other = await new SignJWT({}).setProtectedHeader({ alg: 'HS256' }).setSubject('abc123').setExpirationTime('1h')
-      .sign(new TextEncoder().encode('another-secret-that-is-also-32-chars-long'))
+      .sign(new TextEncoder().encode('u'.repeat(40)))
     expect(await readSessionToken(other)).toBeNull()
 
     // alg none is never accepted.

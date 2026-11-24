@@ -15,7 +15,7 @@ beforeAll(async () => {
   server = await MongoMemoryServer.create()
   process.env.MONGODB_URI = server.getUri()
   process.env.MONGODB_DB = 'lng-password-test'
-  process.env.SESSION_SECRET = 'test-secret-that-is-at-least-32-characters-long'
+  process.env.SESSION_SECRET = 't'.repeat(40)
 }, 120000)
 
 afterAll(async () => {

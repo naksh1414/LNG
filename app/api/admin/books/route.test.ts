@@ -18,7 +18,7 @@ beforeAll(async () => {
   server = await MongoMemoryServer.create()
   process.env.MONGODB_URI = server.getUri()
   process.env.MONGODB_DB = 'lng-admin-books-test'
-  process.env.SESSION_SECRET = 'test-secret-that-is-at-least-32-characters-long'
+  process.env.SESSION_SECRET = 't'.repeat(40)
   cookie = `lng_admin=${await createSessionToken('507f1f77bcf86cd799439011')}`
 }, 120000)
 

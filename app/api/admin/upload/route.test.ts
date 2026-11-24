@@ -10,11 +10,11 @@ const PNG = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 1, 2
 let cookie: string
 
 beforeAll(async () => {
-  process.env.SESSION_SECRET = 'test-secret-that-is-at-least-32-characters-long'
+  process.env.SESSION_SECRET = 't'.repeat(40)
   cookie = `lng_admin=${await createSessionToken('507f1f77bcf86cd799439011')}`
 })
 beforeEach(() => {
-  vi.stubEnv('BLOB_READ_WRITE_TOKEN', 'test-token')
+  vi.stubEnv('BLOB_READ_WRITE_TOKEN', 'blob-token')
   put.mockReset()
   put.mockImplementation(async (path: string) => ({ url: `https://store.public.blob.vercel-storage.com/${path}` }))
 })
@@ -47,7 +47,7 @@ describe('POST /api/admin/upload', () => {
     expect(res.status).toBe(200)
     const [path, , options] = put.mock.calls[0]
     expect(path).toMatch(/^covers\/[0-9a-f-]{36}\.png$/)
-    expect(options).toMatchObject({ access: 'public', contentType: 'image/png', token: 'test-token' })
+    expect(options).toMatchObject({ access: 'public', contentType: 'image/png', token: 'blob-token' })
     expect(await res.json()).toEqual({ url: `https://store.public.blob.vercel-storage.com/${path}` })
   })
 
