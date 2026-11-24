@@ -11,7 +11,7 @@ beforeAll(async () => {
   server = await MongoMemoryServer.create()
   process.env.MONGODB_URI = server.getUri()
   process.env.MONGODB_DB = 'lng-events-route-test'
-  process.env.SESSION_SECRET = 'test-secret'
+  process.env.SESSION_SECRET = 't'.repeat(40)
 }, 120000)
 
 afterAll(async () => {

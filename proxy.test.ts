@@ -5,7 +5,7 @@ import { createSessionToken } from '@/lib/auth/session'
 import { config, proxy } from './proxy'
 
 beforeAll(() => {
-  process.env.SESSION_SECRET = 'test-secret-that-is-at-least-32-characters-long'
+  process.env.SESSION_SECRET = 't'.repeat(40)
 })
 
 const req = (path: string, init: { method?: string; cookie?: string } = {}) =>
