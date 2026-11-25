@@ -10,7 +10,7 @@ import type { SeriesGroup } from '@/lib/books/hierarchy'
 export function SeriesCards({ series, logos = {} }: { series: SeriesGroup[]; logos?: Record<string, string> }) {
   if (series.length === 0) return null
   return (
-    <section aria-labelledby="series-heading" className="mx-auto scroll-mt-16 max-w-6xl px-5 py-12 md:py-16">
+    <section aria-labelledby="series-heading" className="mx-auto scroll-mt-[4.4rem] max-w-6xl px-5 py-12 md:py-16">
       <Reveal>
         <h2 id="series-heading" className="text-4xl font-bold tracking-[-0.03em] text-balance md:text-5xl">
           Start with a series
