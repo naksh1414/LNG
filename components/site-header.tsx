@@ -17,8 +17,8 @@ export function SiteHeader() {
     <>
       <ScrollProgress className="h-1 from-[#eb2891] via-[#fdcc2d] to-[#2d5ba6]" />
       <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
-          <Wordmark />
+        <div className="mx-auto flex h-[4.4rem] max-w-6xl items-center justify-between px-5">
+          <Wordmark className="[&_img]:h-[50px]" />
           <button
             type="button"
             className="inline-flex size-10 items-center justify-center rounded-md text-foreground md:hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
