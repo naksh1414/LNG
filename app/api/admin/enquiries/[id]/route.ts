@@ -5,7 +5,7 @@ import { setEnquiryRead } from '@/lib/enquiries/repo'
 import { isCrossOrigin } from '@/lib/request'
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }): Promise<Response> {
-  const auth = await requireAdmin(request)
+  const auth = await requireAdmin(request, 'enquiries', 'write')
   if (auth instanceof Response) return auth
   if (isCrossOrigin(request)) return forbidden()
   const parsed = z.object({ read: z.boolean() }).safeParse(await request.json().catch(() => null))

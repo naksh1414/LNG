@@ -1,11 +1,14 @@
 'use client'
 
+import { toast } from 'sonner'
 import { useState, type FormEvent } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { isAbort, useAbortSignal } from '@/lib/use-abort-signal'
 
 export function PasswordForm() {
+  const signal = useAbortSignal()
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null)
   const [pending, setPending] = useState(false)
 
@@ -21,6 +24,7 @@ export function PasswordForm() {
     setMessage(null)
     try {
       const res = await fetch('/api/admin/password', {
+        signal: signal(),
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ currentPassword: form.get('currentPassword'), newPassword: form.get('newPassword') }),
@@ -28,10 +32,14 @@ export function PasswordForm() {
       if (res.ok) {
         formEl.reset()
         setMessage({ ok: true, text: 'Password changed.' })
+        toast.success('Password changed.')
       } else {
-        setMessage({ ok: false, text: (await res.json().catch(() => null))?.error ?? 'Could not change the password.' })
+        const msg = (await res.json().catch(() => null))?.error ?? 'Could not change the password.'
+        setMessage({ ok: false, text: msg })
+        toast.error(msg)
       }
-    } catch {
+    } catch (err) {
+      if (isAbort(err)) return
       setMessage({ ok: false, text: 'Could not reach the server. Check your connection.' })
     }
     setPending(false)

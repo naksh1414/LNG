@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils'
 type Fact = { value: ReactNode; label: string; tone: string }
 
 // Facts come from the published books, so the tiles stay true as the catalogue grows.
-function facts(books: Book[]): Fact[] {
+export function facts(books: Book[]): Fact[] {
   const classes = [...new Set(books.map((b) => b.classLevel.trim()).filter(Boolean))].sort((a, b) => classRank(a) - classRank(b))
   const ages = books.length ? ageLabel(Math.min(...books.map((b) => b.ageMin)), Math.max(...books.map((b) => b.ageMax))) : ''
   const series = groupBySeries(books).length
@@ -29,7 +29,7 @@ export function CatalogHero({ books }: { books: Book[] }) {
   const tiles = facts(books)
   return (
     <section className="bg-[linear-gradient(115deg,#fbfaf7_35%,#f3eefb_70%,#dfeafb_100%)]">
-      <div className="mx-auto grid max-w-6xl items-center gap-10 px-5 py-14 md:py-20 lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)] lg:gap-16">
+      <div className="mx-auto grid max-w-6xl 2xl:max-w-[100rem] items-center gap-10 px-5 py-14 md:py-20 lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)] lg:gap-16">
         <div className="anim-rise">
           <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-field px-4 py-1.5 text-sm font-semibold">
             <span aria-hidden="true" className="size-2 rounded-full bg-[#6cc24a]" />

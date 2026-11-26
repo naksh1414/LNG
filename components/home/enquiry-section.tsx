@@ -7,14 +7,14 @@ import { site } from '@/lib/site'
 export function EnquirySection() {
   const wa = normalizeNumber(site.whatsappNumber)
   return (
-    <section id="contact" aria-labelledby="contact-heading" className="mx-auto max-w-6xl scroll-mt-20 px-5 py-12 md:py-16">
+    <section id="contact" aria-labelledby="contact-heading" className="mx-auto max-w-6xl 2xl:max-w-[100rem] scroll-mt-20 px-5 py-8 md:py-12">
       <div className="grid overflow-hidden rounded-[2rem] border border-border bg-field lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
         <Reveal>
           <div className="flex h-full flex-col bg-[#f3eefb] p-8 md:p-12">
-            <h2 id="contact-heading" className="text-4xl font-bold tracking-[-0.03em] text-balance md:text-5xl">
+            <h2 id="contact-heading" className="text-3xl font-bold tracking-[-0.03em] text-balance md:text-4xl">
               Ask us about a book
             </h2>
-            <p className="mt-5 max-w-[38ch] text-lg text-foreground/75">
+            <p className="mt-3 max-w-[48ch] text-base text-foreground/75 md:text-lg">
               Questions about a title, an order for your class or a book for a child you know. Send a note and we will
               reply.
             </p>

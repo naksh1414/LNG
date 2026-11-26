@@ -32,8 +32,8 @@ export function BookCover({ book, index = 0, className, priority, decorative }: 
   const frame = cn('relative block aspect-[3/4] w-full overflow-hidden rounded-l-spine rounded-r-cover', className)
   if (book.coverUrl) {
     return (
-      // Uploaded covers are near-square artwork, so the frame follows them instead of cropping to 3:4.
-      <span className={cn(frame, 'aspect-square bg-muted')}>
+      // Every uploaded cover gets the same 4:5 frame; object-contain fits the whole image inside it, so nothing is cropped.
+      <span className={cn(frame, 'aspect-[4/5] overflow-visible bg-background')}>
         <Image
           src={book.coverUrl}
           alt={decorative ? '' : book.coverAlt || `Cover of ${book.title}`}
@@ -42,9 +42,9 @@ export function BookCover({ book, index = 0, className, priority, decorative }: 
           fetchPriority={priority ? 'high' : undefined}
           fill
           sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
-          className="object-cover"
+          // drop-shadow follows the artwork pixels, not the frame, so the empty bands stay shadowless; needs a `group` ancestor.
+          className="object-contain transition-[filter] duration-500 group-hover:drop-shadow-[0_16px_14px_rgba(27,34,54,0.35)] motion-reduce:transition-none"
         />
-        {spine()}
       </span>
     )
   }

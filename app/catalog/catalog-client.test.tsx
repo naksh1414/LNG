@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 import type { Book } from '@/lib/books/types'
@@ -54,16 +54,16 @@ describe('CatalogClient', () => {
     render(<CatalogClient books={books} subjects={subjects} />)
     const box = screen.getByRole('searchbox', { name: 'Search books' })
     await userEvent.type(box, 'samira')
-    expect(screen.queryByRole('link', { name: /Seed Book/ })).toBeNull()
+    await waitFor(() => expect(screen.queryByRole('link', { name: /Seed Book/ })).toBeNull())
     expect(screen.getByRole('link', { name: /Word Book/ })).toBeInTheDocument()
     await userEvent.clear(box)
     await userEvent.type(box, 'nature')
+    await waitFor(() => expect(screen.queryByRole('link', { name: /Word Book/ })).toBeNull())
     expect(screen.getByRole('link', { name: /Seed Book/ })).toBeInTheDocument()
-    expect(screen.queryByRole('link', { name: /Word Book/ })).toBeNull()
     await userEvent.clear(box)
     await userEvent.type(box, 'word')
+    await waitFor(() => expect(screen.queryByRole('link', { name: /Seed Book/ })).toBeNull())
     expect(screen.getByRole('link', { name: /Word Book/ })).toBeInTheDocument()
-    expect(screen.queryByRole('link', { name: /Seed Book/ })).toBeNull()
   })
 
   it('shows the empty state with zero books and with no match, and clearing restores the list', async () => {
@@ -73,7 +73,7 @@ describe('CatalogClient', () => {
 
     render(<CatalogClient books={books} subjects={subjects} />)
     await userEvent.type(screen.getByRole('searchbox', { name: 'Search books' }), 'zzzz')
-    expect(screen.getByText('No books found')).toBeInTheDocument()
+    expect(await screen.findByText('No books found')).toBeInTheDocument()
     expect(screen.getByText('0 titles')).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: /clear filters/i }))
     expect(screen.getByRole('link', { name: /Seed Book/ })).toBeInTheDocument()

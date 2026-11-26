@@ -49,7 +49,7 @@ export default async function BookPage({ params }: Props) {
   return (
     <>
       <SiteHeader />
-      <main className="mx-auto max-w-6xl px-5 pt-10 pb-24 md:pt-14 md:pb-32">
+      <main className="mx-auto max-w-6xl 2xl:max-w-[100rem] px-5 pt-10 pb-24 md:pt-14 md:pb-32">
         <Breadcrumb
           items={[
             { label: 'Books', href: '/catalog' },
@@ -60,7 +60,7 @@ export default async function BookPage({ params }: Props) {
         />
         <div className="mt-8 grid gap-12 md:mt-12 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:gap-16 lg:gap-24">
           <div className="mx-auto w-[78%] max-w-sm md:sticky md:top-28 md:w-full md:max-w-none md:self-start">
-            <div className="rounded-l-spine rounded-r-cover shadow-[0_30px_60px_-28px_rgba(27,34,54,0.55)]">
+            <div className="rounded-l-spine rounded-r-cover">
               <BookCover book={book} priority />
             </div>
           </div>

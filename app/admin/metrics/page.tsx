@@ -41,7 +41,7 @@ function Top({ title, rows, empty }: { title: string; rows: { label: string; n: 
 }
 
 export default async function AdminMetricsPage() {
-  await requireAdminPage()
+  await requireAdminPage('metrics')
   const m = await getMetrics(30)
   const peak = Math.max(1, ...m.daily.map((d) => d.views))
   return (

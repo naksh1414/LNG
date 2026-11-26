@@ -1,10 +1,12 @@
 'use client'
 
+import { toast } from 'sonner'
 import { Check, Mail, Phone } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import type { Enquiry } from '@/lib/enquiries/repo'
+import { isAbort, useAbortSignal } from '@/lib/use-abort-signal'
 
 const when = new Intl.DateTimeFormat('en-IN', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Kolkata' })
 
@@ -16,7 +18,8 @@ function contactLink(contact: string) {
   return null
 }
 
-export function EnquiryList({ enquiries: initial }: { enquiries: Enquiry[] }) {
+export function EnquiryList({ enquiries: initial, readOnly = false }: { enquiries: Enquiry[]; readOnly?: boolean }) {
+  const signal = useAbortSignal()
   const router = useRouter()
   const [items, setItems] = useState(initial)
   const [busy, setBusy] = useState<string | null>(null)
@@ -27,6 +30,7 @@ export function EnquiryList({ enquiries: initial }: { enquiries: Enquiry[] }) {
     setError(null)
     try {
       const res = await fetch(`/api/admin/enquiries/${e.id}`, {
+        signal: signal(),
         method: 'PATCH',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ read: !e.read }),
@@ -34,8 +38,13 @@ export function EnquiryList({ enquiries: initial }: { enquiries: Enquiry[] }) {
       if (res.ok) {
         setItems((list) => list.map((x) => (x.id === e.id ? { ...x, read: !e.read } : x)))
         router.refresh()
-      } else setError('Could not update the enquiry. Try again.')
-    } catch {
+        toast.success(e.read ? 'Marked as new.' : 'Marked as read.')
+      } else {
+        setError('Could not update the enquiry. Try again.')
+        toast.error('Could not update the enquiry. Try again.')
+      }
+    } catch (err) {
+      if (isAbort(err)) return
       setError('Could not reach the server. Check your connection.')
     }
     setBusy(null)
@@ -61,9 +70,11 @@ export function EnquiryList({ enquiries: initial }: { enquiries: Enquiry[] }) {
                     {e.bookTitle ? ` · About ${e.bookTitle}` : ''}
                   </p>
                 </div>
-                <Button type="button" variant="quiet" size="sm" disabled={busy === e.id} onClick={() => toggle(e)}>
-                  {e.read ? 'Mark as new' : (<><Check aria-hidden="true" />Mark as read</>)}
-                </Button>
+                {!readOnly && (
+                  <Button type="button" variant="quiet" size="sm" disabled={busy === e.id} onClick={() => toggle(e)}>
+                    {e.read ? 'Mark as new' : (<><Check aria-hidden="true" />Mark as read</>)}
+                  </Button>
+                )}
               </div>
               <p className="mt-3 max-w-[70ch] whitespace-pre-line">{e.message}</p>
               <p className="mt-3 text-sm font-semibold">

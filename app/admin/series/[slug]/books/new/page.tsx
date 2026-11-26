@@ -10,7 +10,7 @@ export const metadata: Metadata = { title: 'Add book' }
 export const dynamic = 'force-dynamic'
 
 export default async function NewSeriesBookPage({ params }: { params: Promise<{ slug: string }> }) {
-  await requireAdminPage()
+  await requireAdminPage('catalog', 'write')
   const { slug } = await params
   const series = (await listAdminSeries()).find((s) => s.slug === slug)
   if (!series) notFound()

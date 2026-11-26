@@ -1,5 +1,6 @@
 'use client'
 
+import { toast } from 'sonner'
 import { ImageUp, LoaderCircle, X } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -11,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { slugify } from '@/lib/books/format'
 import type { Book } from '@/lib/books/types'
 import { MAX_COVER_BYTES } from '@/lib/uploads/validate'
+import { isAbort, useAbortSignal } from '@/lib/use-abort-signal'
 
 type Errors = Partial<Record<string, string>>
 
@@ -38,6 +40,7 @@ const described = (id: string, errors: Errors, hint = false) => ({
 
 // series locks the series field: books are added from inside their series. Without it the field is free text.
 export function BookForm({ book, series, backHref = '/admin/series' }: { book?: Book; series?: string; backHref?: string }) {
+  const signal = useAbortSignal()
   const router = useRouter()
   const formRef = useRef<HTMLFormElement>(null)
   const [coverUrl, setCoverUrl] = useState<string | null>(book?.coverUrl ?? null)
@@ -62,11 +65,15 @@ export function BookForm({ book, series, backHref = '/admin/series' }: { book?: 
     try {
       const body = new FormData()
       body.append('file', file)
-      const res = await fetch('/api/admin/upload', { method: 'POST', body })
+      const res = await fetch('/api/admin/upload', { signal: signal(), method: 'POST', body })
       const data = await res.json().catch(() => null)
-      if (res.ok && data?.url) setCoverUrl(data.url)
+      if (res.ok && data?.url) {
+        setCoverUrl(data.url)
+        toast.success('Cover uploaded.')
+      }
       else setErrors((e) => ({ ...e, cover: data?.error ?? 'Could not upload the image. Try again.' }))
-    } catch {
+    } catch (err) {
+      if (isAbort(err)) return
       setErrors((e) => ({ ...e, cover: 'Could not reach the server. Check your connection.' }))
     }
     input.value = ''
@@ -103,11 +110,13 @@ export function BookForm({ book, series, backHref = '/admin/series' }: { book?: 
     setFormError(null)
     try {
       const res = await fetch(book ? `/api/admin/books/${book.id}` : '/api/admin/books', {
+        signal: signal(),
         method: book ? 'PATCH' : 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify(payload),
       })
       if (res.ok) {
+        toast.success(book ? 'Book saved.' : 'Book added.')
         router.push(backHref)
         router.refresh()
         return
@@ -117,9 +126,11 @@ export function BookForm({ book, series, backHref = '/admin/series' }: { book?: 
       // A bad coverUrl is shown on the cover upload control.
       setErrors({ ...fields, cover: fields.coverUrl })
       setFormError(body?.error ?? 'Could not save the book. Try again.')
+      toast.error(body?.error ?? 'Could not save the book. Try again.')
       const first = Object.keys(fields)[0]
       if (first) formRef.current?.querySelector<HTMLElement>(`#${first}`)?.focus()
-    } catch {
+    } catch (err) {
+      if (isAbort(err)) return
       setFormError('Could not reach the server. Check your connection.')
     }
     setSaving(false)

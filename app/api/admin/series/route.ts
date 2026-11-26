@@ -17,7 +17,7 @@ const schema = z.object({
 })
 
 export async function POST(request: Request): Promise<Response> {
-  const auth = await requireAdmin(request)
+  const auth = await requireAdmin(request, 'catalog', 'write')
   if (auth instanceof Response) return auth
   if (isCrossOrigin(request)) return forbidden()
   const parsed = schema.safeParse(await request.json().catch(() => null))

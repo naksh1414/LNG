@@ -12,7 +12,7 @@ export function SiteFooter() {
     <footer className="mt-8 bg-field">
       {/* The logo's four colours as a thin top edge. */}
       <div aria-hidden="true" className="drift h-1 bg-gradient-to-r from-[#eb2891] via-[#fdcc2d] to-[#2d5ba6]" />
-      <div className="mx-auto grid max-w-6xl gap-10 px-5 pt-14 pb-8 md:grid-cols-[minmax(0,6fr)_minmax(0,3fr)_minmax(0,3fr)] md:pt-16">
+      <div className="mx-auto grid max-w-6xl 2xl:max-w-[100rem] gap-10 px-5 pt-14 pb-8 md:grid-cols-[minmax(0,6fr)_minmax(0,3fr)_minmax(0,3fr)] md:pt-16">
         <div>
           <Wordmark />
           <p className="mt-6 max-w-[26ch] text-2xl leading-snug font-bold tracking-[-0.02em] text-balance">
@@ -26,6 +26,11 @@ export function SiteFooter() {
               {item.label}
             </Link>
           ))}
+          {site.app.url && (
+            <a href={site.app.url} target="_blank" rel="noopener noreferrer" className={link}>
+              Get the app
+            </a>
+          )}
         </nav>
         <div className="grid content-start gap-3">
           <p className="font-semibold">Message</p>

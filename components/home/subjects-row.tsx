@@ -6,12 +6,12 @@ export function SubjectsRow({ subjects }: { subjects: string[] }) {
   if (subjects.length === 0) return null
   return (
     <section aria-labelledby="subjects-heading" className="bg-background">
-      <div className="mx-auto grid max-w-6xl gap-10 px-5 py-12 md:py-16 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)]">
+      <div className="mx-auto grid max-w-6xl 2xl:max-w-[100rem] gap-10 px-5 py-8 md:py-12 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)]">
         <div>
-          <h2 id="subjects-heading" className="text-3xl font-bold md:text-4xl">
+          <h2 id="subjects-heading" className="text-3xl font-bold tracking-[-0.03em] text-balance md:text-4xl">
             Find a book by subject
           </h2>
-          <p className="mt-4 max-w-[30ch] text-muted-foreground">
+          <p className="mt-3 max-w-[48ch] text-base text-foreground/75 md:text-lg">
             Each subject follows an area of the Montessori classroom.
           </p>
         </div>

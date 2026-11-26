@@ -6,13 +6,15 @@ import { BookTable } from '@/components/admin/book-table'
 import { SeriesLogoEditor } from '@/components/admin/series-logo-editor'
 import { buttonVariants } from '@/components/ui/button'
 import { requireAdminPage } from '@/lib/auth/require-admin'
+import { can } from '@/lib/auth/roles'
 import { listAdminSeries } from '@/lib/series/repo'
 
 export const metadata: Metadata = { title: 'Series' }
 export const dynamic = 'force-dynamic'
 
 export default async function AdminSeriesDetailPage({ params }: { params: Promise<{ slug: string }> }) {
-  await requireAdminPage()
+  const me = await requireAdminPage('catalog')
+  const canEdit = can(me.permissions, 'catalog', 'write')
   const { slug } = await params
   const series = (await listAdminSeries()).find((s) => s.slug === slug)
   if (!series) notFound()
@@ -33,13 +35,15 @@ export default async function AdminSeriesDetailPage({ params }: { params: Promis
             {series.description ? `. ${series.description}` : ''}
           </p>
         </div>
-        <Link href={`/admin/series/${series.slug}/books/new`} className={buttonVariants()}>
-          <Plus aria-hidden="true" />
-          Add book to this series
-        </Link>
+        {canEdit && (
+          <Link href={`/admin/series/${series.slug}/books/new`} className={buttonVariants()}>
+            <Plus aria-hidden="true" />
+            Add book to this series
+          </Link>
+        )}
       </div>
-      <SeriesLogoEditor slug={series.slug} logoUrl={series.logoUrl} />
-      {series.books.length ? <BookTable books={series.books} /> : <p className="text-muted-foreground">No books in this series yet.</p>}
+      {canEdit && <SeriesLogoEditor slug={series.slug} logoUrl={series.logoUrl} />}
+      {series.books.length ? <BookTable books={series.books} readOnly={!canEdit} /> : <p className="text-muted-foreground">No books in this series yet.</p>}
     </>
   )
 }

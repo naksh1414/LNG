@@ -8,11 +8,11 @@ const font = Figtree({ subsets: ['latin'], variable: '--font-figtree', display: 
 const display = Bricolage_Grotesque({ subsets: ['latin'], variable: '--font-bricolage', display: 'swap' })
 
 export const metadata: Metadata = {
-  title: { default: 'LEARN AND GROW - Books for curious minds', template: '%s | LEARN AND GROW' },
-  description: 'Independent Montessori-inspired books for curious children, families and educators. Discover thoughtful reads from LEARN AND GROW.',
+  title: { default: 'LEARN N GROW - Books for curious minds', template: '%s | LEARN N GROW' },
+  description: 'Independent Montessori-inspired books for curious children, families and educators. Discover thoughtful reads from LEARN N GROW.',
   generator: 'Next.js',
   openGraph: {
-    title: 'LEARN AND GROW - Books for curious minds',
+    title: 'LEARN N GROW - Books for curious minds',
     description: 'Thoughtful books that invite children to follow their curiosity and fall in love with learning.',
     type: 'website',
   },

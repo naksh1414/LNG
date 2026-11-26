@@ -1,5 +1,6 @@
 'use client'
 
+import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { useState, type FormEvent } from 'react'
 import { Button } from '@/components/ui/button'
@@ -7,8 +8,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { LogoUpload } from './logo-upload'
+import { isAbort, useAbortSignal } from '@/lib/use-abort-signal'
 
 export function SeriesForm() {
+  const signal = useAbortSignal()
   const router = useRouter()
   const [saving, setSaving] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -24,6 +27,7 @@ export function SeriesForm() {
     setErrors({})
     try {
       const res = await fetch('/api/admin/series', {
+        signal: signal(),
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ name: String(data.get('name') ?? ''), description: String(data.get('description') ?? ''), logoUrl }),
@@ -32,12 +36,15 @@ export function SeriesForm() {
         form.reset()
         setLogoUrl(null)
         router.refresh()
+        toast.success('Series added.')
       } else {
         const body = await res.json().catch(() => null)
         setErrors(body?.fields ?? {})
         setFormError(body?.error ?? 'Could not save the series. Try again.')
+        toast.error(body?.error ?? 'Could not save the series. Try again.')
       }
-    } catch {
+    } catch (err) {
+      if (isAbort(err)) return
       setFormError('Could not reach the server. Check your connection.')
     }
     setSaving(false)

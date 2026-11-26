@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
-import { createSessionToken } from '@/lib/auth/session'
+import { signInAs } from '@/tests/admin-session'
 import { createBook } from '@/lib/books/repo'
 import { getDb } from '@/lib/db/mongo'
 import { listAudit } from '@/lib/audit/repo'
@@ -18,7 +18,7 @@ beforeAll(async () => {
   process.env.MONGODB_URI = server.getUri()
   process.env.MONGODB_DB = 'lng-admin-series-test'
   process.env.SESSION_SECRET = 't'.repeat(40)
-  cookie = `lng_admin=${await createSessionToken('507f1f77bcf86cd799439011')}`
+  cookie = (await signInAs()).cookie
 }, 120000)
 
 afterAll(async () => {

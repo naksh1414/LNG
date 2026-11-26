@@ -30,14 +30,14 @@ const contactHref = site.nav.find((n) => n.label === 'Contact')!.href
 
 export function SchoolsSection() {
   return (
-    <section id="schools" aria-labelledby="schools-heading" className="mx-auto max-w-6xl scroll-mt-20 px-5 py-12 md:py-16">
+    <section id="schools" aria-labelledby="schools-heading" className="mx-auto max-w-6xl 2xl:max-w-[100rem] scroll-mt-20 px-5 py-8 md:py-12">
       <div className="grid gap-4 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-5">
         <Reveal>
           <div className="flex h-full flex-col rounded-3xl bg-tint p-8 md:p-10">
-            <h2 id="schools-heading" className="max-w-[14ch] text-4xl font-bold tracking-[-0.03em] text-balance md:text-5xl">
+            <h2 id="schools-heading" className="text-3xl font-bold tracking-[-0.03em] text-balance md:text-4xl">
               Books for every child in the class
             </h2>
-            <p className="mt-5 max-w-[36ch] text-lg text-foreground/75">
+            <p className="mt-3 max-w-[48ch] text-base text-foreground/75 md:text-lg">
               Schools and teachers can order our books in sets for classrooms and libraries.
             </p>
             <Link href={contactHref} className={cn(buttonVariants(), 'mt-10 h-auto min-h-12 self-start px-7 py-3 text-base whitespace-normal lg:mt-auto')}>

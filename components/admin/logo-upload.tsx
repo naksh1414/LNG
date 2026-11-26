@@ -1,11 +1,14 @@
 'use client'
 
+import { toast } from 'sonner'
 import { ImageUp, LoaderCircle, X } from 'lucide-react'
 import { useRef, useState, type ChangeEvent } from 'react'
 import { MAX_COVER_BYTES } from '@/lib/uploads/validate'
+import { isAbort, useAbortSignal } from '@/lib/use-abort-signal'
 
 // Uploads through /api/admin/upload and reports the stored URL; the parent decides when to save it.
 export function LogoUpload({ value, onChange, disabled }: { value: string | null; onChange: (url: string | null) => void; disabled?: boolean }) {
+  const signal = useAbortSignal()
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const input = useRef<HTMLInputElement>(null)
@@ -23,12 +26,18 @@ export function LogoUpload({ value, onChange, disabled }: { value: string | null
     try {
       const body = new FormData()
       body.append('file', file)
-      const res = await fetch('/api/admin/upload', { method: 'POST', body })
+      const res = await fetch('/api/admin/upload', { signal: signal(), method: 'POST', body })
       const data = await res.json().catch(() => null)
       if (res.ok && data?.url) onChange(data.url)
-      else setError(data?.error ?? 'Could not upload the image. Try again.')
-    } catch {
+      else {
+        const msg = data?.error ?? 'Could not upload the image. Try again.'
+        setError(msg)
+        toast.error(msg)
+      }
+    } catch (err) {
+      if (isAbort(err)) return
       setError('Could not reach the server. Check your connection.')
+      toast.error('Could not reach the server. Check your connection.')
     }
     if (input.current) input.current.value = ''
     setBusy(false)

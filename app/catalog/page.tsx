@@ -10,7 +10,7 @@ import { CatalogClient } from './catalog-client'
 
 export const metadata = {
   title: 'Catalogue',
-  description: 'Browse the Learn and Grow library of thoughtful books for curious children.',
+  description: 'Browse the Learn N Grow library of thoughtful books for curious children.',
 }
 
 // Needs a live database, so it renders per request; the build must not require MONGODB_URI.

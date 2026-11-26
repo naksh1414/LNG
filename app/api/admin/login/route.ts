@@ -42,6 +42,10 @@ export async function POST(request: Request): Promise<Response> {
       await audit(request, { adminId: admin?.id ?? null, email }, 'login_failed')
       return Response.json({ error: 'Wrong email or password.' }, { status: 401 })
     }
+    if (!admin.active) {
+      await audit(request, { adminId: admin.id, email: admin.email }, 'login_failed')
+      return Response.json({ error: 'This account is disabled. Ask the owner to turn it back on.' }, { status: 403 })
+    }
     await audit(request, { adminId: admin.id, email: admin.email }, 'login_success')
 
     const res = NextResponse.json({ ok: true })

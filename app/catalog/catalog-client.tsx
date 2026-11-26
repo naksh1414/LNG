@@ -1,13 +1,14 @@
 'use client'
 
 import { Search } from 'lucide-react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { motion, useReducedMotion } from 'motion/react'
 import { BookCard } from '@/components/book-card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { trackSearch } from '@/components/analytics-tracker'
 import type { Book } from '@/lib/books/types'
+import { useDebouncedValue } from '@/lib/timing'
 import { cn } from '@/lib/utils'
 
 const ALL = 'All books'
@@ -24,14 +25,21 @@ export function CatalogClient({
   const reduce = useReducedMotion()
   const [subject, setSubject] = useState(initialSubject && subjects.includes(initialSubject) ? initialSubject : ALL)
   const [query, setQuery] = useState('')
-  const q = query.trim().toLowerCase()
-  const shown = books
-    .map((book, index) => ({ book, index }))
-    .filter(
-    ({ book: b }) =>
-      (subject === ALL || b.subject === subject) &&
-      (!q || `${b.title} ${b.author} ${b.subject}`.toLowerCase().includes(q)),
-    )
+  // The box updates at once; filtering and re-layout wait until typing pauses.
+  const debounced = useDebouncedValue(query, 250)
+  // An emptied box applies at once (Clear filters should not flash "no books").
+  const q = (query ? debounced : '').trim().toLowerCase()
+  const shown = useMemo(
+    () =>
+      books
+        .map((book, index) => ({ book, index }))
+        .filter(
+          ({ book: b }) =>
+            (subject === ALL || b.subject === subject) &&
+            (!q || `${b.title} ${b.author} ${b.subject}`.toLowerCase().includes(q)),
+        ),
+    [books, subject, q],
+  )
   const clear = () => {
     setSubject(ALL)
     setQuery('')
@@ -40,7 +48,7 @@ export function CatalogClient({
   return (
     <section id="all-books" aria-label="Browse our books" className="scroll-mt-[4.4rem]">
       <div className="sticky top-[4.4rem] z-30 border-b border-border bg-background/90 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-5 py-4 md:flex-row md:items-center md:justify-between">
+        <div className="mx-auto flex max-w-6xl 2xl:max-w-[100rem] flex-col gap-3 px-5 py-4 md:flex-row md:items-center md:justify-between">
           <div role="group" aria-label="Filter by subject" className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] md:flex-wrap md:overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden">
             {[ALL, ...subjects].map((s) => (
               <button
@@ -75,7 +83,7 @@ export function CatalogClient({
           </div>
         </div>
       </div>
-      <div className="mx-auto max-w-6xl px-5 pt-8 pb-12 md:pb-16">
+      <div className="mx-auto max-w-6xl 2xl:max-w-[100rem] px-5 pt-8 pb-12 md:pb-16">
         <p aria-live="polite" className="text-sm font-medium text-muted-foreground">
           {shown.length} {shown.length === 1 ? 'title' : 'titles'}
         </p>

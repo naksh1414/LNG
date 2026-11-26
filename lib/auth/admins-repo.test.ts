@@ -24,7 +24,7 @@ beforeEach(async () => {
 describe('admins repository', () => {
   it('findAdminByEmail is case-insensitive', async () => {
     const a = await createAdmin(' Owner@Example.com ', 'h1')
-    expect(a).toEqual({ id: expect.any(String), email: 'owner@example.com', passwordHash: 'h1' })
+    expect(a).toEqual({ id: expect.any(String), email: 'owner@example.com', passwordHash: 'h1', role: 'owner', active: true, createdAt: expect.any(String) })
     expect(await findAdminByEmail('OWNER@example.COM')).toEqual(a)
     expect(await findAdminByEmail('other@example.com')).toBeNull()
     expect(await findAdminById(a.id)).toEqual(a)

@@ -5,7 +5,7 @@ import { createBook, listAllBooks } from '@/lib/books/repo'
 import { isCrossOrigin } from '@/lib/request'
 
 export async function GET(request: Request): Promise<Response> {
-  const auth = await requireAdmin(request)
+  const auth = await requireAdmin(request, 'catalog')
   if (auth instanceof Response) return auth
   try {
     return Response.json({ books: await listAllBooks() })
@@ -15,7 +15,7 @@ export async function GET(request: Request): Promise<Response> {
 }
 
 export async function POST(request: Request): Promise<Response> {
-  const auth = await requireAdmin(request)
+  const auth = await requireAdmin(request, 'catalog', 'write')
   if (auth instanceof Response) return auth
   if (isCrossOrigin(request)) return forbidden()
   const input = await parseBookBody(request)

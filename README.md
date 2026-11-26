@@ -1,4 +1,4 @@
-# Learn and Grow publisher site
+# Learn N Grow publisher site
 
 Next.js 16 site with a MongoDB book catalogue, WhatsApp enquiries and an admin panel.
 
