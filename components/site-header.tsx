@@ -8,8 +8,9 @@ import { ScrollProgress } from '@/components/ui/scroll-progress'
 import { site } from '@/lib/site'
 import { Wordmark } from './wordmark'
 
-type Entry = { label: string; href: string }
-type Lists = { series: { name: string; slug: string }[]; subjects: string[] }
+// indent: a subject listed under its series.
+type Entry = { label: string; href: string; indent?: boolean }
+type Lists = { series: { name: string; slug: string; subjects: { name: string; slug: string }[] }[] }
 
 const linkCls =
   'group relative py-3 text-base font-medium whitespace-nowrap text-foreground transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent aria-[current=page]:font-semibold aria-[current=page]:text-accent max-md:border-b max-md:border-border md:py-6 md:text-base'
@@ -46,7 +47,7 @@ function Dropdown({ label, items, onPick }: { label: string; items: Entry[]; onP
                   setOpen(false)
                   onPick()
                 }}
-                className="block rounded-lg px-3 py-2 text-base hover:bg-tint hover:text-accent focus-visible:outline-2 focus-visible:outline-accent max-md:pl-5"
+                className={`block rounded-lg px-3 py-2 hover:bg-tint hover:text-accent focus-visible:outline-2 focus-visible:outline-accent ${i.indent ? 'pl-7 text-sm text-foreground/80 max-md:pl-9' : 'text-base font-semibold max-md:pl-5'}`}
               >
                 {i.label}
               </Link>
@@ -59,7 +60,7 @@ function Dropdown({ label, items, onPick }: { label: string; items: Entry[]; onP
 }
 
 export function SiteHeader() {
-  const [lists, setLists] = useState<Lists>({ series: [], subjects: [] })
+  const [lists, setLists] = useState<Lists>({ series: [] })
   useEffect(() => {
     // Menus stay hidden if this fails; the fixed links always work.
     const controller = new AbortController()
@@ -110,8 +111,14 @@ export function SiteHeader() {
                 />
               </Link>
             ))}
-            <Dropdown label="Series" onPick={() => setOpen(false)} items={lists.series.map((x) => ({ label: x.name, href: `/catalog/${x.slug}` }))} />
-            <Dropdown label="Subjects" onPick={() => setOpen(false)} items={lists.subjects.map((x) => ({ label: x, href: `/catalog?subject=${encodeURIComponent(x)}` }))} />
+            <Dropdown
+              label="Series"
+              onPick={() => setOpen(false)}
+              items={lists.series.flatMap((x) => [
+                { label: x.name, href: `/catalog/${x.slug}` },
+                ...x.subjects.map((sub) => ({ label: sub.name, href: `/catalog/${x.slug}/${sub.slug}`, indent: true })),
+              ])}
+            />
             {site.nav.slice(2).map((item) => (
               <Link
                 key={item.href}

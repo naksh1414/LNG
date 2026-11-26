@@ -2,19 +2,29 @@ import { describe, expect, it } from 'vitest'
 import { catalogHref, pageList, parseCatalogQuery } from './catalog-query'
 
 describe('catalog query', () => {
-  it('keeps a known subject, a trimmed search and a valid page; drops the rest', () => {
-    expect(parseCatalogQuery({ subject: 'Nature', q: '  owl ', page: '3' }, ['Nature'])).toEqual({ subject: 'Nature', q: 'owl', page: 3 })
-    expect(parseCatalogQuery({ subject: 'Nope' }, ['Nature']).subject).toBeUndefined()
-    expect(parseCatalogQuery({ page: '-4' }, []).page).toBe(1)
-    expect(parseCatalogQuery({ page: 'abc' }, []).page).toBe(1)
-    expect(parseCatalogQuery({ subject: ['a', 'b'], q: ['x'] }, ['a']).q).toBe('')
-    expect(parseCatalogQuery({ q: 'x'.repeat(500) }, []).q).toHaveLength(80)
+  const series = [
+    { slug: 'dreamscape', subjects: ['Nature', 'Language'] },
+    { slug: 'kids-magic', subjects: ['English'] },
+  ]
+
+  it('keeps a known series, a subject of that series, a trimmed search and a valid page; drops the rest', () => {
+    expect(parseCatalogQuery({ series: 'dreamscape', subject: 'Nature', q: '  owl ', page: '3' }, series)).toEqual({ series: 'dreamscape', subject: 'Nature', q: 'owl', page: 3 })
+    // a subject that belongs to another series is dropped
+    expect(parseCatalogQuery({ series: 'kids-magic', subject: 'Nature' }, series)).toEqual({ series: 'kids-magic', subject: undefined, q: '', page: 1 })
+    expect(parseCatalogQuery({ series: 'nope' }, series).series).toBeUndefined()
+    // an old subject-only link is kept if any series has the subject
+    expect(parseCatalogQuery({ subject: 'English' }, series).subject).toBe('English')
+    expect(parseCatalogQuery({ subject: 'Nope' }, series).subject).toBeUndefined()
+    expect(parseCatalogQuery({ page: '-4' }, series).page).toBe(1)
+    expect(parseCatalogQuery({ page: 'abc' }, series).page).toBe(1)
+    expect(parseCatalogQuery({ series: ['a', 'b'], q: ['x'] }, series).q).toBe('')
+    expect(parseCatalogQuery({ q: 'x'.repeat(500) }, series).q).toHaveLength(80)
   })
 
   it('catalogHref leaves out defaults and encodes values', () => {
     expect(catalogHref({})).toBe('/catalog')
     expect(catalogHref({ page: 1 })).toBe('/catalog')
-    expect(catalogHref({ subject: 'Art and craft', q: 'a&b', page: 2 })).toBe('/catalog?subject=Art+and+craft&q=a%26b&page=2')
+    expect(catalogHref({ series: 'dreamscape', subject: 'Art and craft', q: 'a&b', page: 2 })).toBe('/catalog?series=dreamscape&subject=Art+and+craft&q=a%26b&page=2')
   })
 
   it('pageList shows the ends and a window around the current page', () => {

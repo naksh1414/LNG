@@ -14,13 +14,15 @@ import type { Book } from '@/lib/books/types'
 import { useDebouncedValue } from '@/lib/timing'
 import { cn } from '@/lib/utils'
 
-const ALL = 'All books'
+const ALL = 'All series'
+const ALL_SUBJECTS = 'All subjects'
 const chip = 'h-10 shrink-0 rounded-full border px-5 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent inline-flex items-center'
 
 // The server sends one page of books. Filters, search and paging are links and URL changes, not browser state.
 export function CatalogClient({
   books,
-  subjects,
+  series,
+  activeSeries,
   subject,
   q,
   page,
@@ -29,7 +31,8 @@ export function CatalogClient({
   catalogTotal,
 }: {
   books: Book[]
-  subjects: string[]
+  series: { name: string; slug: string; subjects: string[] }[]
+  activeSeries?: string
   subject?: string
   q: string
   page: number
@@ -47,8 +50,8 @@ export function CatalogClient({
   useEffect(() => {
     if (debounced.trim() === pushed.current) return
     pushed.current = debounced.trim()
-    startTransition(() => router.replace(catalogHref({ subject, q: pushed.current }), { scroll: false }))
-  }, [debounced, subject, router])
+    startTransition(() => router.replace(catalogHref({ series: activeSeries, subject, q: pushed.current }), { scroll: false }))
+  }, [debounced, activeSeries, subject, router])
 
   useEffect(() => {
     if (q !== pushed.current) {
@@ -57,6 +60,7 @@ export function CatalogClient({
     }
   }, [q])
 
+  const current = series.find((x) => x.slug === activeSeries)
   const first = (page - 1) * PAGE_SIZE + 1
   const clear = catalogHref({})
 
@@ -64,18 +68,18 @@ export function CatalogClient({
     <section id="all-books" aria-label="Browse our books" className="scroll-mt-[4.4rem]">
       <div className="sticky top-[4.4rem] z-30 border-b border-border bg-background/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl 2xl:max-w-[100rem] flex-col gap-3 px-5 py-4 md:flex-row md:items-center md:justify-between">
-          <div role="group" aria-label="Filter by subject" className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] md:flex-wrap md:overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden">
-            {[ALL, ...subjects].map((s) => {
-              const active = (s === ALL && !subject) || s === subject
+          <div role="group" aria-label="Filter by series" className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] md:flex-wrap md:overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden">
+            {[{ name: ALL, slug: undefined }, ...series].map((s) => {
+              const active = s.slug === activeSeries
               return (
                 <Link
-                  key={s}
-                  href={catalogHref({ subject: s === ALL ? undefined : s, q })}
+                  key={s.name}
+                  href={catalogHref({ series: s.slug, q })}
                   scroll={false}
                   aria-current={active ? 'true' : undefined}
                   className={cn(chip, active ? 'border-foreground bg-foreground text-background' : 'border-input bg-field text-foreground hover:border-foreground')}
                 >
-                  {s}
+                  {s.name}
                 </Link>
               )
             })}
@@ -95,6 +99,33 @@ export function CatalogClient({
             />
           </div>
         </div>
+        {(current || subject) && (
+          <div className="mx-auto max-w-6xl 2xl:max-w-[100rem] px-5 pb-4">
+            <div role="group" aria-label={current ? `Subjects in ${current.name}` : 'Subject filter'} className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] md:flex-wrap md:overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden">
+              {current ? (
+                [{ name: ALL_SUBJECTS, value: undefined }, ...current.subjects.map((n) => ({ name: n, value: n }))].map((s) => {
+                  const active = s.value === subject
+                  return (
+                    <Link
+                      key={s.name}
+                      href={catalogHref({ series: activeSeries, subject: s.value, q })}
+                      scroll={false}
+                      aria-current={active ? 'true' : undefined}
+                      className={cn(chip, 'h-9 px-4', active ? 'border-accent bg-accent text-accent-foreground' : 'border-input bg-background text-foreground hover:border-foreground')}
+                    >
+                      {s.name}
+                    </Link>
+                  )
+                })
+              ) : (
+                // An old ?subject= link with no series: show it as a removable filter.
+                <Link href={catalogHref({ q })} scroll={false} className={cn(chip, 'h-9 border-accent bg-accent px-4 text-accent-foreground')}>
+                  Subject: {subject} ✕
+                </Link>
+              )}
+            </div>
+          </div>
+        )}
       </div>
       <div className="mx-auto max-w-6xl 2xl:max-w-[100rem] px-5 pt-8 pb-12 md:pb-16" aria-busy={pending}>
         <p aria-live="polite" className="text-sm font-medium text-muted-foreground">
@@ -131,7 +162,7 @@ export function CatalogClient({
             )}
           </div>
         )}
-        <Pagination page={page} totalPages={totalPages} hrefFor={(n) => `${catalogHref({ subject, q, page: n })}#all-books`} />
+        <Pagination page={page} totalPages={totalPages} hrefFor={(n) => `${catalogHref({ series: activeSeries, subject, q, page: n })}#all-books`} />
       </div>
     </section>
   )

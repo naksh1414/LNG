@@ -23,7 +23,7 @@ const input = (i: number, over: Partial<BookInput> = {}): BookInput => ({
   subtitle: '',
   author: 'Ada Reed',
   slug: `book-${i}`,
-  series: 'S',
+  series: i <= 10 ? 'Alpha' : 'Beta',
   subject: i % 2 ? 'Nature' : 'Language',
   classLevel: 'Class 1',
   ageMin: 3,
@@ -59,6 +59,13 @@ describe('searchPublishedBooks', () => {
     expect(nature.books.every((b) => b.subject === 'Nature')).toBe(true)
     expect((await searchPublishedBooks({ q: 'BOOK 07', page: 1, pageSize: 10 })).books.map((b) => b.title)).toEqual(['Book 07'])
     expect((await searchPublishedBooks({ q: 'ada', page: 1, pageSize: 5 })).total).toBe(25)
+  })
+
+  it('filters by series, alone or with a subject, and finds books saved with no series', async () => {
+    expect((await searchPublishedBooks({ series: 'Alpha', page: 1, pageSize: 50 })).total).toBe(10)
+    expect((await searchPublishedBooks({ series: 'Beta', subject: 'Nature', page: 1, pageSize: 50 })).books.every((b) => b.series === 'Beta' && b.subject === 'Nature')).toBe(true)
+    await createBook(input(50, { series: '', title: 'Loose Book', slug: 'loose' }))
+    expect((await searchPublishedBooks({ series: 'More books', page: 1, pageSize: 50 })).books.map((b) => b.title)).toEqual(['Loose Book'])
   })
 
   it('treats the search as plain text, not a pattern', async () => {

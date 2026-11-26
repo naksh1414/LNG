@@ -1,15 +1,18 @@
 import { groupBySeries } from '@/lib/books/hierarchy'
-import { listPublishedBooks, listSubjects } from '@/lib/books/repo'
+import { listPublishedBooks } from '@/lib/books/repo'
 
 export const dynamic = 'force-dynamic'
 
-// Feeds the header's Series and Subjects menus; the header still works if this fails.
+// Feeds the header's Series menu: each series with its own subjects. The header still works if this fails.
 export async function GET(): Promise<Response> {
   try {
-    const [books, subjects] = await Promise.all([listPublishedBooks(), listSubjects()])
-    const series = groupBySeries(books).map(({ name, slug }) => ({ name, slug }))
-    return Response.json({ series, subjects }, { headers: { 'Cache-Control': 'public, max-age=60' } })
+    const series = groupBySeries(await listPublishedBooks()).map(({ name, slug, subjects }) => ({
+      name,
+      slug,
+      subjects: subjects.map((s) => ({ name: s.name, slug: s.slug })),
+    }))
+    return Response.json({ series }, { headers: { 'Cache-Control': 'public, max-age=60' } })
   } catch {
-    return Response.json({ series: [], subjects: [] })
+    return Response.json({ series: [] })
   }
 }

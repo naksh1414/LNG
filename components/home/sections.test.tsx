@@ -9,7 +9,6 @@ import { Hero } from './hero'
 import { EnquirySection } from './enquiry-section'
 import { PressSection } from './press-section'
 import { SchoolsSection } from './schools-section'
-import { SubjectsRow } from './subjects-row'
 
 // jsdom has no IntersectionObserver, which Reveal's whileInView needs.
 beforeEach(() => {
@@ -52,7 +51,6 @@ describe('home sections', () => {
         <SiteHeader />
         <main>
           <Hero />
-          <SubjectsRow subjects={['Nature', 'Language']} />
           <FeaturedBooks books={books} />
           <SchoolsSection />
           <PressSection />
