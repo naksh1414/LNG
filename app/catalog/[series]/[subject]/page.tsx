@@ -35,7 +35,7 @@ export default async function SubjectPage({ params }: Props) {
       <SiteHeader />
       <main>
         <section className="bg-[linear-gradient(115deg,#fbfaf7_35%,#f3eefb_70%,#dfeafb_100%)]">
-          <div className="mx-auto max-w-6xl px-5 py-12 md:py-20">
+          <div className="mx-auto max-w-6xl 2xl:max-w-[100rem] px-5 py-12 md:py-20">
             <Breadcrumb
               items={[
                 { label: 'Books', href: '/catalog' },
@@ -52,7 +52,7 @@ export default async function SubjectPage({ params }: Props) {
             </p>
           </div>
         </section>
-        <div className="mx-auto max-w-6xl px-5 pb-16 md:pb-24">
+        <div className="mx-auto max-w-6xl 2xl:max-w-[100rem] px-5 pb-16 md:pb-24">
           {classes.map((c) => (
             <section key={c.level} aria-labelledby={`class-${c.level}`.replace(/\s+/g, '-')} className="pt-12 md:pt-16">
               <h2 id={`class-${c.level}`.replace(/\s+/g, '-')} className="text-3xl font-bold tracking-[-0.03em] md:text-4xl">

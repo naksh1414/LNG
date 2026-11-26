@@ -1,14 +1,14 @@
 import type { Metadata } from 'next'
-import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { LoginForm } from '@/components/admin/login-form'
 import { Wordmark } from '@/components/wordmark'
-import { readSessionToken, SESSION_COOKIE } from '@/lib/auth/session'
+import { currentAdmin } from '@/lib/auth/require-admin'
 
 export const metadata: Metadata = { title: 'Sign in' }
 
 export default async function LoginPage() {
-  if (await readSessionToken((await cookies()).get(SESSION_COOKIE)?.value)) redirect('/admin/series')
+  // currentAdmin, not just the cookie: a disabled user with a live cookie must see this page, not loop.
+  if (await currentAdmin()) redirect('/admin')
   return (
     <div className="mx-auto flex min-h-[100dvh] max-w-sm flex-col justify-center px-4 py-12">
       <Wordmark />

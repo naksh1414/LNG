@@ -3,6 +3,7 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useReducedMotion } from 'motion/react'
 import { useRef } from 'react'
+import { useThrottle } from '@/lib/timing'
 
 const arrow =
   'inline-flex size-11 items-center justify-center rounded-full border border-foreground/20 bg-background text-foreground transition-colors hover:border-foreground hover:bg-foreground hover:text-background focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
@@ -11,8 +12,11 @@ const arrow =
 export function ShelfScroller({ header, children }: { header: React.ReactNode; children: React.ReactNode }) {
   const row = useRef<HTMLUListElement>(null)
   const reduce = useReducedMotion()
-  const go = (dir: 1 | -1) =>
-    row.current?.scrollBy({ left: dir * row.current.clientWidth * 0.8, behavior: reduce ? 'auto' : 'smooth' })
+  // Throttled so fast clicks do not stack up smooth scrolls.
+  const go = useThrottle(
+    (dir: 1 | -1) => row.current?.scrollBy({ left: dir * row.current.clientWidth * 0.8, behavior: reduce ? 'auto' : 'smooth' }),
+    350,
+  )
   return (
     <>
       <div className="flex flex-wrap items-end justify-between gap-6">

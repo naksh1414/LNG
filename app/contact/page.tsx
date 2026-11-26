@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils'
 
 export const metadata = {
   title: 'Contact',
-  description: 'Ask Learn and Grow about a book, a classroom order or a title for a child you know.',
+  description: 'Ask Learn N Grow about a book, a classroom order or a title for a child you know.',
 }
 
 export default function ContactPage() {
@@ -21,7 +21,7 @@ export default function ContactPage() {
   return (
     <>
       <SiteHeader />
-      <main className="mx-auto grid max-w-6xl gap-14 px-5 pt-20 pb-24 md:pt-28 md:pb-32 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:gap-20">
+      <main className="mx-auto grid max-w-6xl 2xl:max-w-[100rem] gap-14 px-5 pt-20 pb-24 md:pt-28 md:pb-32 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:gap-20">
         <div>
           <h1 className="text-[2.6rem] leading-[1] font-extrabold tracking-[-0.045em] text-balance sm:text-6xl lg:text-7xl">
             Write to us

@@ -146,6 +146,21 @@
     background-position: 100% 50%;
   }
 }
+/* marquee: infinite loop; the track holds two identical halves, so -50% lands exactly on the start. */
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .marquee {
+    animation: marquee var(--marquee-s, 60s) linear infinite;
+  }
+  .marquee-wrap:hover .marquee,
+  .marquee-wrap:focus-within .marquee {
+    animation-play-state: paused;
+  }
+}
 @media (prefers-reduced-motion: no-preference) {
   .anim-rise {
     animation: rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;

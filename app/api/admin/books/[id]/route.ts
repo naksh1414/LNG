@@ -8,7 +8,7 @@ type Ctx = { params: Promise<{ id: string }> }
 const notFound = () => Response.json({ error: 'Book not found.' }, { status: 404 })
 
 export async function PATCH(request: Request, { params }: Ctx): Promise<Response> {
-  const auth = await requireAdmin(request)
+  const auth = await requireAdmin(request, 'catalog', 'write')
   if (auth instanceof Response) return auth
   if (isCrossOrigin(request)) return forbidden()
   const input = await parseBookBody(request)
@@ -27,7 +27,7 @@ export async function PATCH(request: Request, { params }: Ctx): Promise<Response
 
 // Enquiries and events keep a title snapshot, so they stay readable after the book is gone.
 export async function DELETE(request: Request, { params }: Ctx): Promise<Response> {
-  const auth = await requireAdmin(request)
+  const auth = await requireAdmin(request, 'catalog', 'write')
   if (auth instanceof Response) return auth
   if (isCrossOrigin(request)) return forbidden()
   try {

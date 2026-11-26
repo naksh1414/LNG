@@ -1,10 +1,13 @@
 'use client'
 
+import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { LogoUpload } from './logo-upload'
+import { isAbort, useAbortSignal } from '@/lib/use-abort-signal'
 
 export function SeriesLogoEditor({ slug, logoUrl }: { slug: string; logoUrl: string | null }) {
+  const signal = useAbortSignal()
   const router = useRouter()
   const [url, setUrl] = useState(logoUrl)
   const [saving, setSaving] = useState(false)
@@ -15,6 +18,7 @@ export function SeriesLogoEditor({ slug, logoUrl }: { slug: string; logoUrl: str
     setError(null)
     try {
       const res = await fetch(`/api/admin/series/${slug}`, {
+        signal: signal(),
         method: 'PATCH',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ logoUrl: next }),
@@ -22,9 +26,16 @@ export function SeriesLogoEditor({ slug, logoUrl }: { slug: string; logoUrl: str
       if (res.ok) {
         setUrl(next)
         router.refresh()
-      } else setError((await res.json().catch(() => null))?.error ?? 'Could not save the logo. Try again.')
-    } catch {
+        toast.success(next ? 'Logo updated.' : 'Logo removed.')
+      } else {
+        const msg = (await res.json().catch(() => null))?.error ?? 'Could not save the logo. Try again.'
+        setError(msg)
+        toast.error(msg)
+      }
+    } catch (err) {
+      if (isAbort(err)) return
       setError('Could not reach the server. Check your connection.')
+      toast.error('Could not reach the server. Check your connection.')
     }
     setSaving(false)
   }

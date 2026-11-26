@@ -1,12 +1,17 @@
 'use client'
 
+import dynamic from 'next/dynamic'
+import { toast } from 'sonner'
 import { Pencil, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 import { ageLabel } from '@/lib/books/format'
 import type { Book } from '@/lib/books/types'
 import { cn } from '@/lib/utils'
-import { ConfirmDialog } from './confirm-dialog'
+import { isAbort, useAbortSignal } from '@/lib/use-abort-signal'
+
+// Loaded on first use: the dialog code is not needed until someone clicks Delete.
+const ConfirmDialog = dynamic(() => import('./confirm-dialog').then((m) => m.ConfirmDialog))
 
 type Flag = 'published' | 'featured'
 
@@ -29,7 +34,8 @@ function Toggle({ on, label, busy, onClick }: { on: boolean; label: string; busy
   )
 }
 
-export function BookTable({ books: initial }: { books: Book[] }) {
+export function BookTable({ books: initial, readOnly = false }: { books: Book[]; readOnly?: boolean }) {
+  const signal = useAbortSignal()
   const [books, setBooks] = useState(initial)
   const [busy, setBusy] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -42,6 +48,7 @@ export function BookTable({ books: initial }: { books: Book[] }) {
     try {
       // PATCH takes the whole BookInput; the server ignores id and timestamps.
       const res = await fetch(`/api/admin/books/${book.id}`, {
+        signal: signal(),
         method: 'PATCH',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ ...book, [flag]: !book[flag] }),
@@ -49,8 +56,11 @@ export function BookTable({ books: initial }: { books: Book[] }) {
       const data = await res.json().catch(() => null)
       if (!res.ok || !data?.book) throw new Error(data?.error)
       setBooks((list) => list.map((b) => (b.id === book.id ? data.book : b)))
+      toast.success(`Updated "${book.title}".`)
     } catch (e) {
+      if (isAbort(e)) return
       setError(`Could not update "${book.title}". ${(e as Error).message || 'Try again.'}`)
+      toast.error(`Could not update "${book.title}".`)
     }
     setBusy(null)
   }
@@ -60,13 +70,16 @@ export function BookTable({ books: initial }: { books: Book[] }) {
     setBusy(deleting.id)
     setDeleteError(null)
     try {
-      const res = await fetch(`/api/admin/books/${deleting.id}`, { method: 'DELETE' })
+      const res = await fetch(`/api/admin/books/${deleting.id}`, { signal: signal(), method: 'DELETE' })
       if (!res.ok && res.status !== 404) throw new Error((await res.json().catch(() => null))?.error)
       const id = deleting.id
       setBooks((list) => list.filter((b) => b.id !== id))
       setDeleting(null)
+      toast.success('Book deleted.')
     } catch (e) {
+      if (isAbort(e)) return
       setDeleteError((e as Error).message || 'Could not delete the book. Try again.')
+      toast.error('Could not delete the book.')
     }
     setBusy(null)
   }
@@ -98,7 +111,7 @@ export function BookTable({ books: initial }: { books: Book[] }) {
               <th scope="col" className="px-4 py-3">Ages</th>
               <th scope="col" className="px-4 py-3">Published</th>
               <th scope="col" className="px-4 py-3">Featured</th>
-              <th scope="col" className="px-4 py-3"><span className="sr-only">Actions</span></th>
+              {!readOnly && <th scope="col" className="px-4 py-3"><span className="sr-only">Actions</span></th>}
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -115,22 +128,27 @@ export function BookTable({ books: initial }: { books: Book[] }) {
                   )}
                 </td>
                 <td className="px-4 py-3">
-                  <Link
-                    href={`/admin/books/${book.id}`}
-                    className="font-semibold text-foreground hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-                  >
-                    {book.title}
-                  </Link>
+                  {readOnly ? (
+                    <span className="font-semibold text-foreground">{book.title}</span>
+                  ) : (
+                    <Link
+                      href={`/admin/books/${book.id}`}
+                      className="font-semibold text-foreground hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                    >
+                      {book.title}
+                    </Link>
+                  )}
                   <p className="mt-0.5 text-xs text-muted-foreground">{book.author}</p>
                 </td>
                 <td className="px-4 py-3 text-foreground">{book.subject}</td>
                 <td className="px-4 py-3 whitespace-nowrap text-foreground">{ageLabel(book.ageMin, book.ageMax)}</td>
                 <td className="px-4 py-3">
-                  <Toggle on={book.published} label={`Published: ${book.title}`} busy={busy === book.id} onClick={() => toggle(book, 'published')} />
+                  {readOnly ? <span>{book.published ? 'Yes' : 'No'}</span> : <Toggle on={book.published} label={`Published: ${book.title}`} busy={busy === book.id} onClick={() => toggle(book, 'published')} />}
                 </td>
                 <td className="px-4 py-3">
-                  <Toggle on={book.featured} label={`Featured: ${book.title}`} busy={busy === book.id} onClick={() => toggle(book, 'featured')} />
+                  {readOnly ? <span>{book.featured ? 'Yes' : 'No'}</span> : <Toggle on={book.featured} label={`Featured: ${book.title}`} busy={busy === book.id} onClick={() => toggle(book, 'featured')} />}
                 </td>
+                {!readOnly && (
                 <td className="px-4 py-3">
                   <div className="flex justify-end gap-1">
                     <Link href={`/admin/books/${book.id}`} aria-label={`Edit ${book.title}`} className={iconButton}>
@@ -149,21 +167,24 @@ export function BookTable({ books: initial }: { books: Book[] }) {
                     </button>
                   </div>
                 </td>
+                )}
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      <ConfirmDialog
-        open={deleting !== null}
-        onOpenChange={(open) => !open && busy === null && setDeleting(null)}
-        title={`Delete "${deleting?.title ?? ''}"?`}
-        description="The book is removed from the site straight away. Enquiries and visit records that mention it keep its title. This cannot be undone. To take it off the site for now, turn Published off instead."
-        confirmLabel="Delete book"
-        onConfirm={confirmDelete}
-        pending={busy !== null}
-        error={deleteError}
-      />
+      {deleting && (
+        <ConfirmDialog
+          open={deleting !== null}
+          onOpenChange={(open) => !open && busy === null && setDeleting(null)}
+          title={`Delete "${deleting?.title ?? ''}"?`}
+          description="The book is removed from the site straight away. Enquiries and visit records that mention it keep its title. This cannot be undone. To take it off the site for now, turn Published off instead."
+          confirmLabel="Delete book"
+          onConfirm={confirmDelete}
+          pending={busy !== null}
+          error={deleteError}
+        />
+      )}
     </>
   )
 }

@@ -8,7 +8,8 @@ async function connect(): Promise<Db> {
   if (!uri) throw new Error('MONGODB_URI is not set')
   const name = process.env.MONGODB_DB
   if (!name) throw new Error('MONGODB_DB is not set')
-  g._lngMongo ??= MongoClient.connect(uri).catch((e) => {
+  // maxPoolSize: each serverless instance keeps few connections, so many instances do not exhaust Atlas.
+  g._lngMongo ??= MongoClient.connect(uri, { maxPoolSize: 10 }).catch((e) => {
     g._lngMongo = undefined
     throw e
   })
@@ -27,6 +28,7 @@ export async function ensureIndexes(): Promise<void> {
   await db.collection('events').createIndex({ createdAt: 1 }, { expireAfterSeconds: 13 * 30 * 24 * 60 * 60 })
   await db.collection('enquiries').createIndex({ createdAt: -1, read: 1 })
   await db.collection('admins').createIndex({ email: 1 }, { unique: true })
+  await db.collection('roles').createIndex({ nameKey: 1 }, { unique: true })
 }
 
 // Indexes are created lazily, once per process.

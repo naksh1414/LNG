@@ -10,7 +10,7 @@ import { CONTENT_TYPE, MAX_COVER_BYTES, validateCover } from '@/lib/uploads/vali
 // shortcut: Vercel caps function request bodies at 4.5 MB, so covers above that fail on Vercel before this runs;
 // switch to client uploads (@vercel/blob/client handleUpload) if larger covers are needed.
 export async function POST(request: Request): Promise<Response> {
-  const auth = await requireAdmin(request)
+  const auth = await requireAdmin(request, 'catalog', 'write')
   if (auth instanceof Response) return auth
   if (isCrossOrigin(request)) return Response.json({ error: 'Cross-origin request refused.' }, { status: 403 })
 

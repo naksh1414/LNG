@@ -1,16 +1,21 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { BookCover } from '@/components/book-cover'
 import { Reveal } from '@/components/reveal'
 import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
 import { SubjectMark } from '@/components/subject-mark'
 import { buttonVariants } from '@/components/ui/button'
+import { ageLabel } from '@/lib/books/format'
+import { groupBySeries, spreadAcrossSeries } from '@/lib/books/hierarchy'
+import { listPublishedBooks } from '@/lib/books/repo'
+import { site } from '@/lib/site'
 import { cn } from '@/lib/utils'
 
 export const metadata = {
   title: 'About us',
   description:
-    'Meet Learn and Grow, an independent publisher of Montessori-inspired books for curious children, families and educators.',
+    'Meet Learn N Grow, an independent press of Montessori-inspired books for curious children, families and educators.',
 }
 
 const principles = [
@@ -34,24 +39,27 @@ const principles = [
   },
 ]
 
-const series = [
-  { label: 'Dreamscape Art and Craft A to C', ages: 'Ages 3 to 5', copy: 'First colouring, drawing and tear and paste activities.' },
-  { label: 'Dreamscape Art and Craft 1 to 5', ages: 'Ages 6 to 10', copy: 'Paper models, paper craft, origami and fun facts that grow with the child.' },
-]
+// Needs a live database, so it renders per request; the build must not require MONGODB_URI.
+export const dynamic = 'force-dynamic'
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  // A failed read hides the series list instead of taking the page down.
+  const books = await listPublishedBooks().catch(() => [])
+  const series = groupBySeries(books)
+  // One cover per series first, so the picture is not all one series.
+  const covers = spreadAcrossSeries(books.filter((b) => b.coverUrl)).slice(0, 4)
   return (
     <>
       <SiteHeader />
       <main>
         <section className="bg-[linear-gradient(115deg,#fbfaf7_35%,#f3eefb_70%,#dfeafb_100%)]">
-          <div className="mx-auto grid max-w-6xl items-center gap-12 px-5 py-14 md:py-24 lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)] lg:gap-16">
+          <div className="mx-auto grid max-w-6xl 2xl:max-w-[100rem] items-center gap-12 px-5 py-14 md:py-24 lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)] lg:gap-16">
             <div>
               <h1 className="text-[2.5rem] leading-[1.02] font-extrabold tracking-[-0.04em] text-balance sm:text-5xl md:text-6xl">
                 Books for the way children wonder.
               </h1>
-              <p className="mt-6 max-w-[44ch] text-lg leading-relaxed text-muted-foreground md:text-xl">
-                Learn and Grow is an independent publishing house creating Montessori-inspired books for curious
+              <p className="mt-3 max-w-[48ch] text-base text-foreground/75 md:text-lg">
+                Learn N Grow is an independent publishing house creating Montessori-inspired books for curious
                 children and the grown-ups learning alongside them.
               </p>
               <div className="mt-9 flex flex-wrap gap-3">
@@ -60,27 +68,19 @@ export default function AboutPage() {
                 </Link>
               </div>
             </div>
-            <div aria-hidden="true" className="relative mx-auto aspect-square w-full max-w-md">
-              <Image
-                src="/Books/dreamscape-a.jpg"
-                alt=""
-                width={640}
-                height={640}
-                className="bob absolute top-0 left-0 w-[62%] -rotate-6 rounded-3xl shadow-[0_30px_50px_-24px_rgba(27,34,54,0.6)]"
-              />
-              <Image
-                src="/Books/dreamscape-1.jpg"
-                alt=""
-                width={640}
-                height={640}
-                style={{ animationDelay: '-3s' }}
-                className="bob absolute right-0 bottom-0 w-[62%] rotate-6 rounded-3xl shadow-[0_30px_50px_-24px_rgba(27,34,54,0.6)]"
-              />
-            </div>
+            {covers.length > 0 && (
+              <ul aria-hidden="true" className="mx-auto grid w-full max-w-md grid-cols-2 gap-4">
+                {covers.map((b, i) => (
+                  <li key={b.id} className={i % 2 ? 'translate-y-6' : undefined}>
+                    <BookCover book={b} index={i} decorative className="rounded-2xl" />
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </section>
 
-        <section id="approach" aria-labelledby="approach-heading" className="mx-auto max-w-6xl scroll-mt-20 px-5 py-12 md:py-20">
+        <section id="approach" aria-labelledby="approach-heading" className="mx-auto max-w-6xl 2xl:max-w-[100rem] scroll-mt-20 px-5 py-12 md:py-20">
           <div className="grid gap-10 rounded-[2rem] border border-border bg-field p-8 md:p-14 lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)] lg:gap-16">
             <Reveal>
               <span aria-hidden="true" className="flex size-14 items-center justify-center rounded-2xl bg-[#fff1bf] text-foreground">
@@ -88,7 +88,7 @@ export default function AboutPage() {
               </span>
               <h2
                 id="approach-heading"
-                className="mt-8 max-w-[16ch] text-4xl leading-[1.05] font-bold tracking-[-0.03em] text-balance md:text-5xl"
+                className="text-3xl font-bold tracking-[-0.03em] text-balance md:text-4xl"
               >
                 Children are not empty vessels. They arrive full of questions.
               </h2>
@@ -109,16 +109,16 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section aria-labelledby="principles-heading" className="mx-auto max-w-6xl px-5 pb-12 md:pb-20">
+        <section aria-labelledby="principles-heading" className="mx-auto max-w-6xl 2xl:max-w-[100rem] px-5 pb-12 md:pb-20">
           <Reveal>
-            <h2 id="principles-heading" className="text-4xl font-bold tracking-[-0.03em] text-balance md:text-5xl">
+            <h2 id="principles-heading" className="text-3xl font-bold tracking-[-0.03em] text-balance md:text-4xl">
               Small things, thoughtfully made.
             </h2>
           </Reveal>
           <ul className="mt-10 grid gap-4 md:grid-cols-3 md:gap-5">
             {principles.map((p, i) => (
               <li key={p.title}>
-                <Reveal delay={i * 0.08}>
+                <Reveal delay={i * 0.08} className="h-full">
                   <div className="h-full rounded-3xl border border-border bg-field p-7">
                     <span aria-hidden="true" className={cn('flex size-14 items-center justify-center rounded-2xl', p.tile)}>
                       <SubjectMark subject={p.subject} className="size-8" />
@@ -132,36 +132,78 @@ export default function AboutPage() {
           </ul>
         </section>
 
-        <section aria-labelledby="publish-heading" className="mx-2 rounded-[2rem] bg-[#f3eefb] sm:mx-4">
-          <div className="mx-auto grid max-w-6xl gap-10 px-5 py-12 md:py-16 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
-            <Reveal>
-              <h2 id="publish-heading" className="max-w-[14ch] text-4xl font-bold tracking-[-0.03em] text-balance md:text-5xl">
-                What we publish
-              </h2>
-              <p className="mt-5 max-w-[36ch] text-lg text-foreground/75">
-                Art and craft activity books that follow the early years of learning, aligned with NEP 2020.
-              </p>
-            </Reveal>
-            <ul className="grid gap-4">
-              {series.map((s, i) => (
-                <li key={s.label}>
-                  <Reveal delay={i * 0.08}>
-                    <div className="rounded-3xl bg-field p-6 md:p-7">
-                      <p className="text-sm font-semibold text-accent">{s.ages}</p>
-                      <h3 className="mt-1 text-xl font-bold tracking-[-0.01em]">{s.label}</h3>
-                      <p className="mt-2 text-muted-foreground">{s.copy}</p>
-                    </div>
-                  </Reveal>
-                </li>
-              ))}
-            </ul>
-          </div>
+        <section aria-labelledby="founder-heading" className="mx-auto max-w-6xl 2xl:max-w-[100rem] px-5 pb-12 md:pb-20">
+          <Reveal>
+            <div className="grid gap-8 rounded-[2rem] border border-border bg-field p-8 md:p-14 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-16">
+              <div>
+                {site.founder.image ? (
+                  <Image
+                    src={site.founder.image}
+                    alt={`${site.founder.name}, ${site.founder.role}`}
+                    width={480}
+                    height={480}
+                    className="aspect-square w-48 rounded-3xl object-cover shadow-[0_24px_40px_-24px_rgba(27,34,54,0.6)] lg:w-full lg:max-w-xs"
+                  />
+                ) : (
+                  <span aria-hidden="true" className="flex size-24 items-center justify-center rounded-full bg-tint text-4xl font-bold">
+                    {site.founder.name[0]}
+                  </span>
+                )}
+                <p className="mt-5 text-xl font-bold tracking-[-0.01em]">{site.founder.name}</p>
+                <p className="text-muted-foreground">{site.founder.role}</p>
+              </div>
+              <div>
+                <h2 id="founder-heading" className="text-3xl font-bold tracking-[-0.03em] text-balance md:text-4xl">
+                  A message from our founder
+                </h2>
+                <div className="mt-6 grid max-w-[60ch] gap-4 text-lg leading-relaxed text-muted-foreground">
+                  {site.founder.message.map((para) => (
+                    <p key={para}>{para}</p>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </Reveal>
         </section>
 
-        <section aria-labelledby="begin-heading" className="mx-auto max-w-6xl px-5 py-12 md:py-20">
+        {series.length > 0 && (
+          <section aria-labelledby="publish-heading" className="mx-auto max-w-6xl 2xl:max-w-[100rem] px-5 pb-12 md:pb-20">
+            <div className="grid gap-10 rounded-[2rem] bg-[#f3eefb] p-8 md:p-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
+              <Reveal>
+                <h2 id="publish-heading" className="text-3xl font-bold tracking-[-0.03em] text-balance md:text-4xl">
+                  What we publish
+                </h2>
+                <p className="mt-3 max-w-[48ch] text-base text-foreground/75 md:text-lg">
+                  Every series from the press, with books for each class from the early years up.
+                </p>
+              </Reveal>
+              <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+                {series.map((s, i) => (
+                  <li key={s.slug}>
+                    <Reveal delay={i * 0.08} className="h-full">
+                      <Link
+                        href={`/catalog/${s.slug}`}
+                        className="block h-full rounded-3xl bg-field p-6 transition-shadow hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent md:p-7"
+                      >
+                        <p className="text-sm font-semibold text-accent">{ageLabel(s.ageMin, s.ageMax)}</p>
+                        <h3 className="mt-1 text-xl font-bold tracking-[-0.01em]">{s.name}</h3>
+                        <p className="mt-2 text-muted-foreground">
+                          {s.books.length} {s.books.length === 1 ? 'book' : 'books'} across {s.subjects.length}{' '}
+                          {s.subjects.length === 1 ? 'subject' : 'subjects'}.
+                        </p>
+                      </Link>
+                    </Reveal>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </section>
+        )}
+
+        <section aria-labelledby="begin-heading" className="mx-auto max-w-6xl 2xl:max-w-[100rem] px-5 py-12 md:py-20">
           <Reveal>
             <div className="text-center">
-            <h2 id="begin-heading" className="text-4xl font-bold tracking-[-0.03em] text-balance md:text-5xl">
+            <h2 id="begin-heading" className="text-3xl font-bold tracking-[-0.03em] text-balance md:text-4xl">
               Find a book to begin with.
             </h2>
             <p className="mx-auto mt-5 max-w-[48ch] text-lg leading-relaxed text-muted-foreground">

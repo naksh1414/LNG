@@ -1,64 +1,40 @@
 import Link from 'next/link'
+import { BookCover } from '@/components/book-cover'
 import { Reveal } from '@/components/reveal'
+import { spreadAcrossSeries } from '@/lib/books/hierarchy'
+import type { Book } from '@/lib/books/types'
 
-const principles = [
-  {
-    title: 'Follow the question.',
-    copy: 'A child’s curiosity is the place to begin. Our books invite exploration instead of rushing to the answer.',
-  },
-  {
-    title: 'Respect their pace.',
-    copy: 'Every child meets the world in their own way, so our books leave room for different paths.',
-  },
-  {
-    title: 'Make learning tangible.',
-    copy: 'Clear language, considered details and hands-on ideas connect what children read with the world around them.',
-  },
-]
-
-export function PressSection() {
+// Covers are spread across series so no single series fills the picture.
+export function PressSection({ books = [] }: { books?: Book[] }) {
+  const covers = spreadAcrossSeries(books.filter((b) => b.coverUrl)).slice(0, 4)
   return (
-    <section aria-labelledby="press-heading" className="bg-field">
-      <div className="mx-auto max-w-6xl px-5 py-12 md:py-20">
+    <section aria-labelledby="press-heading" className="mx-auto max-w-6xl 2xl:max-w-[100rem] px-5 py-8 md:py-12">
+      <div className="grid items-center gap-8 rounded-[2rem] bg-field p-8 md:p-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-14">
         <Reveal>
-          <h2
-            id="press-heading"
-            className="max-w-[20ch] text-[2.2rem] leading-[1.02] font-extrabold tracking-[-0.04em] text-balance sm:text-5xl lg:text-6xl"
-          >
-            Children are not empty vessels. They arrive full of questions.
+          <h2 id="press-heading" className="text-3xl font-bold tracking-[-0.03em] text-balance md:text-4xl">
+            An independent press for curious children.
           </h2>
+          <p className="mt-3 max-w-[48ch] text-base text-foreground/75 md:text-lg">
+            Learn N Grow makes Montessori books for home and classroom.
+          </p>
+          <Link
+            href="/about"
+            className="mt-6 inline-flex items-center gap-2 rounded-full border border-foreground/30 px-6 py-3 text-sm font-semibold transition-colors hover:border-foreground hover:bg-foreground hover:text-background focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          >
+            More about the press
+          </Link>
         </Reveal>
-        <div className="mt-10 grid gap-8 md:mt-14 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
-          <Reveal>
-            <p className="max-w-[44ch] text-xl leading-relaxed">
-              Learn and Grow is an independent press making Montessori books for curious children and the grown-ups
-              learning alongside them.
-            </p>
-            <p className="mt-5 max-w-[48ch] text-lg leading-relaxed text-muted-foreground">
-              We believe a good book can open a door, then give a child the time to walk through it. Guided by
-              Montessori principles, we treat children as capable, active learners, and make books to return to at home
-              and in the classroom.
-            </p>
-            <Link
-              href="/about"
-              className="mt-8 inline-flex items-center gap-2 rounded-full border border-foreground/30 px-6 py-3 text-sm font-semibold transition-colors hover:border-foreground hover:bg-foreground hover:text-background focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-            >
-              More about the press
-            </Link>
+        {covers.length > 0 && (
+          <Reveal delay={0.08}>
+            <ul aria-hidden="true" className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+              {covers.map((b, i) => (
+                <li key={b.id} className={i % 2 ? 'sm:translate-y-4' : undefined}>
+                  <BookCover book={b} index={i} decorative className="rounded-2xl" />
+                </li>
+              ))}
+            </ul>
           </Reveal>
-          <ul className="grid gap-3">
-            {principles.map((p, i) => (
-              <li key={p.title}>
-                <Reveal delay={i * 0.08}>
-                  <div className="rounded-3xl bg-background p-6 text-lg leading-relaxed text-muted-foreground ring-1 ring-border">
-                    <strong className="block text-xl font-bold tracking-[-0.01em] text-foreground">{p.title}</strong>
-                    <span className="mt-1.5 block">{p.copy}</span>
-                  </div>
-                </Reveal>
-              </li>
-            ))}
-          </ul>
-        </div>
+        )}
       </div>
     </section>
   )

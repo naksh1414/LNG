@@ -22,14 +22,14 @@ describe('whatsapp', () => {
     })!
     expect(url.startsWith('https://wa.me/919876543210?text=')).toBe(true)
     const text = decodeURIComponent(url.split('?text=')[1])
-    expect(text).toBe('Hello Learn and Grow, I am Asha (a@b.in).\nI am asking about "The "Owl"".\n\nHi\nthere')
+    expect(text).toBe('Hello Learn N Grow, I am Asha (a@b.in).\nI am asking about "The "Owl"".\n\nHi\nthere')
     expect(url).toContain('%0A')
     expect(url).toContain('%22')
   })
 
   it('buildWhatsAppUrl omits the book line without a title', () => {
     const url = buildWhatsAppUrl('919876543210', { name: 'A', contact: 'c', message: 'm' })!
-    expect(decodeURIComponent(url.split('?text=')[1])).toBe('Hello Learn and Grow, I am A (c).\n\nm')
+    expect(decodeURIComponent(url.split('?text=')[1])).toBe('Hello Learn N Grow, I am A (c).\n\nm')
   })
 
   it('buildWhatsAppUrl returns null for an invalid number', () => {

@@ -35,7 +35,7 @@ export default async function SeriesPage({ params }: Props) {
       <SiteHeader />
       <main>
         <section className="bg-[linear-gradient(115deg,#fbfaf7_35%,#f3eefb_70%,#dfeafb_100%)]">
-          <div className="mx-auto max-w-6xl px-5 py-12 md:py-20">
+          <div className="mx-auto max-w-6xl 2xl:max-w-[100rem] px-5 py-12 md:py-20">
             <Breadcrumb items={[{ label: 'Books', href: '/catalog' }, { label: group.name }]} />
             <h1 className="mt-6 max-w-[16ch] text-[2.4rem] leading-[1.02] font-extrabold tracking-[-0.04em] text-balance sm:text-5xl md:text-6xl">
               {group.name}
@@ -47,7 +47,7 @@ export default async function SeriesPage({ params }: Props) {
             </p>
           </div>
         </section>
-        <section aria-labelledby="subjects-heading" className="mx-auto max-w-6xl px-5 py-12 md:py-16">
+        <section aria-labelledby="subjects-heading" className="mx-auto max-w-6xl 2xl:max-w-[100rem] px-5 py-12 md:py-16">
           <h2 id="subjects-heading" className="text-3xl font-bold tracking-[-0.03em] md:text-4xl">
             Subjects in {group.name}
           </h2>

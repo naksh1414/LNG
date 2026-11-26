@@ -11,7 +11,7 @@ export const metadata: Metadata = { title: 'Edit book' }
 export const dynamic = 'force-dynamic'
 
 export default async function EditBookPage({ params }: { params: Promise<{ id: string }> }) {
-  await requireAdminPage()
+  await requireAdminPage('catalog', 'write')
   const book = await getBookById((await params).id)
   if (!book) notFound()
   const back = book.series ? `/admin/series/${slugify(book.series)}` : '/admin/series'

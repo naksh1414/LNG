@@ -1,6 +1,8 @@
 // @vitest-environment node
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
-import { createSessionToken } from '@/lib/auth/session'
+import { MongoMemoryServer } from 'mongodb-memory-server'
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
+import { getDb } from '@/lib/db/mongo'
+import { signInAs } from '@/tests/admin-session'
 import { POST } from './route'
 
 const put = vi.hoisted(() => vi.fn())
@@ -8,10 +10,18 @@ vi.mock('@vercel/blob', () => ({ put }))
 
 const PNG = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 1, 2, 3])
 let cookie: string
+let server: MongoMemoryServer
 
 beforeAll(async () => {
+  server = await MongoMemoryServer.create()
+  process.env.MONGODB_URI = server.getUri()
+  process.env.MONGODB_DB = 'lng-upload-test'
   process.env.SESSION_SECRET = 't'.repeat(40)
-  cookie = `lng_admin=${await createSessionToken('507f1f77bcf86cd799439011')}`
+  cookie = (await signInAs()).cookie
+}, 120000)
+afterAll(async () => {
+  await (await getDb()).client.close()
+  await server.stop()
 })
 beforeEach(() => {
   vi.stubEnv('BLOB_READ_WRITE_TOKEN', 'blob-token')

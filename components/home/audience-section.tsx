@@ -33,12 +33,12 @@ const audiences = [
 
 export function AudienceSection() {
   return (
-    <section aria-labelledby="audience-heading" className="mx-auto max-w-6xl px-5 py-12 md:py-16">
+    <section aria-labelledby="audience-heading" className="mx-auto max-w-6xl 2xl:max-w-[100rem] px-5 py-8 md:py-12">
       <Reveal>
-        <h2 id="audience-heading" className="max-w-[18ch] text-4xl font-bold tracking-[-0.03em] text-balance md:text-5xl">
+        <h2 id="audience-heading" className="text-3xl font-bold tracking-[-0.03em] text-balance md:text-4xl">
           Books for every kind of reader
         </h2>
-        <p className="mt-5 max-w-[46ch] text-lg text-muted-foreground">
+        <p className="mt-3 max-w-[48ch] text-base text-foreground/75 md:text-lg">
           Whether you read at the kitchen table or teach a room of twenty, start with the shelf that fits.
         </p>
       </Reveal>

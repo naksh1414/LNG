@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { isAbort, useAbortSignal } from '@/lib/use-abort-signal'
 import { Send } from 'lucide-react'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -22,6 +23,7 @@ const labelClass = 'mb-2 block text-sm font-semibold'
 
 export function EnquiryForm({ book }: Props) {
   const [errors, setErrors] = useState<Errors>({})
+  const signal = useAbortSignal()
   const [sending, setSending] = useState(false)
   const [failed, setFailed] = useState(false)
   const [result, setResult] = useState<Result | null>(null)
@@ -62,12 +64,15 @@ export function EnquiryForm({ book }: Props) {
     let saved = false
     try {
       const res = await fetch('/api/enquiries', {
+        signal: signal(),
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ name, contact, message, bookId: book?.id, website: value('website') }),
       })
       saved = res.ok
-    } catch {
+    } catch (err) {
+      // Unmounted mid-send: drop the blank window opened for WhatsApp and stop.
+      if (isAbort(err)) return void win?.close()
       saved = false
     }
     setSending(false)

@@ -33,7 +33,7 @@ export function CatalogExtras() {
   const wa = normalizeNumber(site.whatsappNumber)
   return (
     <>
-      <section aria-labelledby="qualities-heading" className="mx-auto max-w-6xl px-5 py-12 md:py-16">
+      <section aria-labelledby="qualities-heading" className="mx-auto max-w-6xl 2xl:max-w-[100rem] px-5 py-12 md:py-16">
         <Reveal>
           <h2 id="qualities-heading" className="max-w-[20ch] text-4xl font-bold tracking-[-0.03em] text-balance md:text-5xl">
             What goes into every book
@@ -58,7 +58,7 @@ export function CatalogExtras() {
 
       <NepSection />
 
-      <section aria-labelledby="class-order-heading" className="mx-auto max-w-6xl px-5 pb-12 md:pb-16">
+      <section aria-labelledby="class-order-heading" className="mx-auto max-w-6xl 2xl:max-w-[100rem] px-5 pb-12 md:pb-16">
         <Reveal>
           <div className="flex flex-col gap-8 rounded-[2rem] bg-tint p-8 md:flex-row md:items-center md:justify-between md:p-12">
             <div>
@@ -76,7 +76,7 @@ export function CatalogExtras() {
         </Reveal>
       </section>
 
-      <section aria-labelledby="help-heading" className="mx-auto max-w-6xl px-5 pb-16 md:pb-24">
+      <section aria-labelledby="help-heading" className="mx-auto max-w-6xl 2xl:max-w-[100rem] px-5 pb-16 md:pb-24">
         <Reveal>
           <div className="flex flex-col gap-8 rounded-[2rem] border border-border bg-field p-8 md:flex-row md:items-center md:justify-between md:p-12">
             <div>

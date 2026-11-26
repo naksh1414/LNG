@@ -10,12 +10,12 @@ import type { SeriesGroup } from '@/lib/books/hierarchy'
 export function SeriesCards({ series, logos = {} }: { series: SeriesGroup[]; logos?: Record<string, string> }) {
   if (series.length === 0) return null
   return (
-    <section aria-labelledby="series-heading" className="mx-auto scroll-mt-[4.4rem] max-w-6xl px-5 py-12 md:py-16">
+    <section aria-labelledby="series-heading" className="mx-auto scroll-mt-[4.4rem] max-w-6xl 2xl:max-w-[100rem] px-5 py-8 md:py-12">
       <Reveal>
-        <h2 id="series-heading" className="text-4xl font-bold tracking-[-0.03em] text-balance md:text-5xl">
+        <h2 id="series-heading" className="text-3xl font-bold tracking-[-0.03em] text-balance md:text-4xl">
           Start with a series
         </h2>
-        <p className="mt-4 max-w-[48ch] text-lg text-muted-foreground">
+        <p className="mt-3 max-w-[48ch] text-base text-foreground/75 md:text-lg">
           Each series has its subjects, and each subject has a book for every class.
         </p>
       </Reveal>
@@ -35,7 +35,7 @@ export function SeriesCards({ series, logos = {} }: { series: SeriesGroup[]; log
                 ) : (
                   <span aria-hidden="true" className="flex shrink-0 -space-x-8">
                     {covers.map((b, i) => (
-                      <span key={b.id} className="w-24 rounded-2xl shadow-[0_14px_24px_-14px_rgba(27,34,54,0.6)] sm:w-28" style={{ zIndex: 3 - i }}>
+                      <span key={b.id} className="w-24 rounded-2xl sm:w-28" style={{ zIndex: 3 - i }}>
                         <BookCover book={b} index={i} className="rounded-2xl" decorative />
                       </span>
                     ))}

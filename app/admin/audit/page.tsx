@@ -20,12 +20,22 @@ const labels: Record<AuditAction, string> = {
   book_created: 'Added book',
   book_updated: 'Edited book',
   book_deleted: 'Deleted book',
+  testimonial_created: 'Added testimonial',
+  testimonial_updated: 'Edited testimonial',
+  testimonial_deleted: 'Deleted testimonial',
+  user_created: 'Added admin user',
+  user_updated: 'Changed admin user',
+  user_password_reset: 'Reset a user password',
+  user_deleted: 'Deleted admin user',
+  role_created: 'Added role',
+  role_updated: 'Changed role',
+  role_deleted: 'Deleted role',
 }
 
 const when = new Intl.DateTimeFormat('en-IN', { dateStyle: 'medium', timeStyle: 'medium', timeZone: 'Asia/Kolkata' })
 
 export default async function AdminAuditPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
-  await requireAdminPage()
+  await requireAdminPage('audit')
   const page = Math.max(1, Number.parseInt((await searchParams).page ?? '1', 10) || 1)
   const [{ entries, total }, chain] = await Promise.all([listAudit(page, PAGE_SIZE), verifyAuditChain()])
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE))

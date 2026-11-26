@@ -9,7 +9,7 @@ export function buildWhatsAppUrl(
 ): string | null {
   const digits = normalizeNumber(number)
   if (!digits) return null
-  const lines = [`Hello Learn and Grow, I am ${e.name} (${e.contact}).`]
+  const lines = [`Hello Learn N Grow, I am ${e.name} (${e.contact}).`]
   if (e.bookTitle) lines.push(`I am asking about "${e.bookTitle}".`)
   const text = `${lines.join('\n')}\n\n${e.message}`
   return `https://wa.me/${digits}?text=${encodeURIComponent(text)}`

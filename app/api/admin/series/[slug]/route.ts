@@ -8,7 +8,7 @@ import { listAdminSeries, setSeriesLogo } from '@/lib/series/repo'
 import { logoUrlSchema } from '../route'
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ slug: string }> }): Promise<Response> {
-  const auth = await requireAdmin(request)
+  const auth = await requireAdmin(request, 'catalog', 'write')
   if (auth instanceof Response) return auth
   if (isCrossOrigin(request)) return forbidden()
   const parsed = z.object({ logoUrl: logoUrlSchema }).safeParse(await request.json().catch(() => null))

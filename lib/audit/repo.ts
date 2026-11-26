@@ -11,6 +11,16 @@ export type AuditAction =
   | 'book_created'
   | 'book_updated'
   | 'book_deleted'
+  | 'testimonial_created'
+  | 'testimonial_updated'
+  | 'testimonial_deleted'
+  | 'user_created'
+  | 'user_updated'
+  | 'user_password_reset'
+  | 'user_deleted'
+  | 'role_created'
+  | 'role_updated'
+  | 'role_deleted'
 
 export type AuditEntry = {
   seq: number
