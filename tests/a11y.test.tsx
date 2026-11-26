@@ -19,10 +19,12 @@ const books = ['Seed Book', 'Word Book', 'Sky Book', 'Hand Book', 'Wild Book'].m
 vi.mock('@/lib/books/repo', () => ({
   listPublishedBooks: vi.fn(async () => books),
   listSubjects: vi.fn(async () => ['Language', 'Nature']),
+  searchPublishedBooks: vi.fn(async () => ({ books, total: books.length })),
   getPublishedBookBySlug: vi.fn(async (slug: string) => books.find((b) => b.slug === slug) ?? null),
 }))
 
 vi.mock('@/lib/testimonials/repo', () => ({ listTestimonials: vi.fn(async () => []) }))
+vi.mock('next/navigation', () => ({ useRouter: () => ({ replace: vi.fn(), push: vi.fn() }), usePathname: () => '/', redirect: vi.fn() }))
 vi.mock('@/lib/series/repo', () => ({ listSeriesLogos: vi.fn(async () => ({})) }))
 
 beforeEach(() => {

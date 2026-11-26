@@ -1,4 +1,4 @@
-import { ObjectId, type WithId } from 'mongodb'
+import { ObjectId, type Filter, type WithId } from 'mongodb'
 import { getDb } from '@/lib/db/mongo'
 import { slugify, uniqueSlug } from './format'
 import type { Book, BookInput } from './types'
@@ -22,6 +22,26 @@ async function list(filter: { published?: true }): Promise<Book[]> {
 
 export const listPublishedBooks = () => list({ published: true })
 export const listAllBooks = () => list({})
+
+const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+// One page of published books. Filtering, counting and paging happen in the database, so the browser
+// never receives more than a page. shortcut: a case-insensitive regex scan, fine for hundreds of books;
+// add a text index if the catalogue grows to many thousands.
+export async function searchPublishedBooks(opts: { subject?: string; q?: string; page: number; pageSize: number }): Promise<{ books: Book[]; total: number }> {
+  const c = await books()
+  const filter: Filter<BookDoc> = { published: true }
+  if (opts.subject) filter.subject = opts.subject
+  if (opts.q) {
+    const rx = new RegExp(escapeRegex(opts.q), 'i')
+    filter.$or = [{ title: rx }, { author: rx }, { subject: rx }]
+  }
+  const [docs, total] = await Promise.all([
+    c.find(filter).sort({ createdAt: 1, _id: 1 }).skip((opts.page - 1) * opts.pageSize).limit(opts.pageSize).toArray(),
+    c.countDocuments(filter),
+  ])
+  return { books: docs.map(toBook), total }
+}
 
 export async function getPublishedBookBySlug(slug: string): Promise<Book | null> {
   const doc = await (await books()).findOne({ slug, published: true })
