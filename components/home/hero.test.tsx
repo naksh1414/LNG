@@ -1,7 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import { Hero } from './hero'
-import { SubjectsRow } from './subjects-row'
 
 describe('Hero', () => {
   it('hero has one h1, one primary and one secondary action, and a subtext of 20 words or fewer', () => {
@@ -16,15 +15,4 @@ describe('Hero', () => {
     expect(sub.trim().split(/\s+/).length).toBeLessThanOrEqual(20)
   })
 
-})
-
-describe('SubjectsRow', () => {
-  it('subjects row links to the filtered catalogue', () => {
-    render(<SubjectsRow subjects={['Nature', 'Practical Life']} />)
-    expect(screen.getByRole('link', { name: /Nature/ })).toHaveAttribute('href', '/catalog?subject=Nature')
-    expect(screen.getByRole('link', { name: /Practical Life/ })).toHaveAttribute(
-      'href',
-      '/catalog?subject=Practical%20Life',
-    )
-  })
 })

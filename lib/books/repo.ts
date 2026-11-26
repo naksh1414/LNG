@@ -1,6 +1,7 @@
 import { ObjectId, type Filter, type WithId } from 'mongodb'
 import { getDb } from '@/lib/db/mongo'
 import { slugify, uniqueSlug } from './format'
+import { FALLBACK_SERIES } from './hierarchy'
 import type { Book, BookInput } from './types'
 
 type BookDoc = Omit<Book, 'id' | 'createdAt' | 'updatedAt'> & { createdAt: Date; updatedAt: Date }
@@ -28,9 +29,11 @@ const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 // One page of published books. Filtering, counting and paging happen in the database, so the browser
 // never receives more than a page. shortcut: a case-insensitive regex scan, fine for hundreds of books;
 // add a text index if the catalogue grows to many thousands.
-export async function searchPublishedBooks(opts: { subject?: string; q?: string; page: number; pageSize: number }): Promise<{ books: Book[]; total: number }> {
+export async function searchPublishedBooks(opts: { series?: string; subject?: string; q?: string; page: number; pageSize: number }): Promise<{ books: Book[]; total: number }> {
   const c = await books()
   const filter: Filter<BookDoc> = { published: true }
+  // Books saved before series existed have none; the hierarchy shows them under the fallback name.
+  if (opts.series) filter.series = opts.series === FALLBACK_SERIES ? { $in: ['', null as never] } : opts.series
   if (opts.subject) filter.subject = opts.subject
   if (opts.q) {
     const rx = new RegExp(escapeRegex(opts.q), 'i')

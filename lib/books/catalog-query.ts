@@ -2,24 +2,30 @@
 export const PAGE_SIZE = 8
 const MAX_QUERY = 80
 
-export type CatalogQuery = { subject?: string; q: string; page: number }
+export type CatalogQuery = { series?: string; subject?: string; q: string; page: number }
 
 type Params = Record<string, string | string[] | undefined>
 const one = (v: string | string[] | undefined) => (typeof v === 'string' ? v : undefined)
 
-// Unknown subjects, junk page numbers and oversized searches are dropped, never trusted.
-export function parseCatalogQuery(params: Params, subjects: string[]): CatalogQuery {
+// A subject belongs to a series. series is the slug. Unknown values, junk page numbers and oversized
+// searches are dropped, never trusted. A subject with no series (an old ?subject= link) is kept if any series has it.
+export function parseCatalogQuery(params: Params, series: { slug: string; subjects: string[] }[]): CatalogQuery {
+  const slug = one(params.series)
+  const chosen = series.find((s) => s.slug === slug)
   const subject = one(params.subject)
+  const known = chosen ? chosen.subjects : series.flatMap((s) => s.subjects)
   const page = Number.parseInt(one(params.page) ?? '1', 10)
   return {
-    subject: subject && subjects.includes(subject) ? subject : undefined,
+    series: chosen?.slug,
+    subject: subject && known.includes(subject) ? subject : undefined,
     q: (one(params.q) ?? '').trim().slice(0, MAX_QUERY),
     page: Number.isFinite(page) && page >= 1 ? Math.min(page, 10_000) : 1,
   }
 }
 
-export function catalogHref({ subject, q, page }: Partial<CatalogQuery>): string {
+export function catalogHref({ series, subject, q, page }: Partial<CatalogQuery>): string {
   const sp = new URLSearchParams()
+  if (series) sp.set('series', series)
   if (subject) sp.set('subject', subject)
   if (q) sp.set('q', q)
   if (page && page > 1) sp.set('page', String(page))

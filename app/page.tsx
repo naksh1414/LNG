@@ -11,11 +11,10 @@ import { StatsStrip } from '@/components/home/stats-strip'
 import { Testimonials } from '@/components/home/testimonials'
 import { SchoolsSection } from '@/components/home/schools-section'
 import { SeriesCards } from '@/components/catalog/series-cards'
-import { SubjectsRow } from '@/components/home/subjects-row'
 import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
 import { groupBySeries, spreadAcrossSeries } from '@/lib/books/hierarchy'
-import { listPublishedBooks, listSubjects } from '@/lib/books/repo'
+import { listPublishedBooks } from '@/lib/books/repo'
 import { listSeriesLogos } from '@/lib/series/repo'
 import { listTestimonials } from '@/lib/testimonials/repo'
 
@@ -24,9 +23,8 @@ export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
   // A failed testimonials read must not take the home page down.
-  const [books, subjects, logos, testimonials] = await Promise.all([
+  const [books, logos, testimonials] = await Promise.all([
     listPublishedBooks(),
-    listSubjects(),
     listSeriesLogos(),
     listTestimonials(true).catch(() => []),
   ])
@@ -42,7 +40,6 @@ export default async function HomePage() {
         <DigitalSection />
         <AudienceSection />
         <FeaturedBooks books={featured} />
-        <SubjectsRow subjects={subjects} />
         <NepSection />
         <LatestBooks books={books} />
         <SchoolsSection />
