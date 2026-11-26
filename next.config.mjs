@@ -41,6 +41,11 @@ const nextConfig = {
   },
   images: {
     remotePatterns: [{ protocol: 'https', hostname: '*.public.blob.vercel-storage.com' }],
+    // Few sizes: short srcset lists (smaller HTML) and fewer resized copies to build and cache.
+    deviceSizes: [640, 828, 1200],
+    imageSizes: [96, 192, 384],
+    // Resized copies are kept for 31 days, so a visitor rarely waits for one to be made.
+    minimumCacheTTL: 60 * 60 * 24 * 31,
   },
 }
 
